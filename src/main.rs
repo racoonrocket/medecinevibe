@@ -51,7 +51,13 @@ async fn main() {
         .nest_service("/", ServeDir::new("static"))
         .layer(ServiceBuilder::new().layer(cors));
     
-    let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
+    let port = std::env::var("PORT")
+    .unwrap_or_else(|_| "3000".to_string()) // 3000 pour le local
+    .parse::<u16>()
+    .expect("PORT doit être un nombre");
+
+    let addr = SocketAddr::from(([0, 0, 0, 0], port)); // 0.0.0.0 = accessible de l’extérieur
+    println!("🌐 Serveur en écoute sur http://0.0.0.0:{}", port);
     println!("🌐 Serveur en écoute sur http://{}", addr);
     
     let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
