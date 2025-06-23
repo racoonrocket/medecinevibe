@@ -1,0 +1,16 @@
+# Cibles de compilation
+/target/
+
+# Fichiers temporaires et backups
+**/*.rs.bk
+**/*~
+
+# Données locales
+/data/*.csv
+
+# Outils
+Cargo.lock
+.DS_Store
+.idea/
+*.log
+*.swp

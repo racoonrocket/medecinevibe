@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Internat Médecine - Analyse des Rangs</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f8f9fa;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            background: linear-gradient(45deg, #2c3e50, #3498db);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .form-section {
+            padding: 30px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .form-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }
+
+        .form-group select,
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e1e8ed;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+
+        .btn-analyze {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1em;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .btn-analyze:hover {
+            background: #2980b9;
+        }
+
+        .results-section {
+            padding: 30px;
+            border-top: 1px solid #eee;
+        }
+
+        .chart-container {
+            background: white;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #eee;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .error {
+            background: #e74c3c;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏥 Internat Médecine</h1>
+            <p>Visualisez votre position par rapport aux années précédentes</p>
+        </div>
+
+        <div class="form-section">
+            <form id="analysisForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="specialite">Spécialité</label>
+                        <select id="specialite" required>
+                            <option value="">Sélectionnez une spécialité</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="ville">Ville (optionnel)</label>
+                        <select id="ville">
+                            <option value="">Toutes les villes</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="userRank">Votre rang / 8900</label>
+                        <input type="number" id="userRank" placeholder="Ex: 1500" min="1" max="8900" required />
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn-analyze">Analyser</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div id="results" class="results-section hidden">
+            <div id="loading" class="loading hidden">Chargement...</div>
+            <div id="error" class="error hidden"></div>
+            <div id="chartContainer" class="chart-container hidden">
+                <div id="plot" style="width:100%; height:500px;"></div>
+            </div>
+            <div id="chartContainerVilles" class="chart-container hidden">
+                <div id="plotVilles" style="width:100%; height:650px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let specialitesData = [], villesData = [];
+
+        async function loadInitialData() {
+            try {
+                const response = await fetch('/api/specialites');
+                const data = await response.json();
+                specialitesData = data.specialites.sort();
+                villesData = data.villes.sort();
+
+                const specialiteSelect = document.getElementById('specialite');
+                const villeSelect = document.getElementById('ville');
+
+                specialitesData.forEach(s => {
+                    const option = document.createElement('option');
+                    option.value = s;
+                    option.textContent = s;
+                    specialiteSelect.appendChild(option);
+                });
+
+                villesData.forEach(v => {
+                    const option = document.createElement('option');
+                    option.value = v;
+                    option.textContent = v;
+                    villeSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Erreur:', error);
+            }
+        }
+
+        document.getElementById('analysisForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const specialite = document.getElementById('specialite').value;
+            const ville = document.getElementById('ville').value;
+            const userRank = parseInt(document.getElementById('userRank').value);
+
+            if (!specialite) {
+                showError('Veuillez sélectionner une spécialité.');
+                return;
+            }
+            await analyzeData(specialite, ville, userRank);
+        });
+
+        async function analyzeData(specialite, ville, userRank) {
+            showLoading(true);
+            hideError();
+
+            try {
+                const years = [2019, 2020, 2021, 2022, 2023, 2024];
+                const totalCandidates = { 2019: 8500, 2020: 8600, 2021: 8700, 2022: 8750, 2023: 8850, 2024: 8900 };
+                const allData = [];
+
+                for (const year of years) {
+                    let endpoint = `/api/stats/${encodeURIComponent(specialite)}?annee=${year}`;
+                    if (ville) endpoint += `&ville=${encodeURIComponent(ville)}`;
+
+                    const response = await fetch(endpoint);
+                    if (response.ok) {
+                        const data = await response.json();
+                        const total = totalCandidates[year];
+                        const transform = (rang) => rang / total;
+
+                        allData.push({
+                            year,
+                            q1: transform(data.rang_q1),
+                            median: transform(data.rang_median),
+                            q3: transform(data.rang_q3),
+                            min: transform(data.rang_min || 1),
+                            max: transform(data.rang_max || total),
+                            minOrig: data.rang_min || 1,
+                            maxOrig: data.rang_max || total,
+                            medianOrig: data.rang_median
+                        });
+                    }
+                }
+
+                if (allData.length === 0) throw new Error('Aucune donnée trouvée');
+
+                const userTransformed = userRank / 8899
+                createBoxPlot(allData, userTransformed, userRank, specialite + (ville ? ` - ${ville}` : ''));
+                await createBarPlot(specialite, ville, years, userRank, userTransformed);
+
+            } catch (error) {
+                showError('Erreur: ' + error.message);
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        function createBoxPlot(allData, userTransformed, userRank, title) {
+            // Transformer les données pour Plotly
+            const traces = allData.map(yearData => ({
+                type: 'box',
+                name: yearData.year.toString(),
+                x: [yearData.year],
+                q1: [yearData.q1],
+                median: [yearData.median],
+                q3: [yearData.q3],
+                lowerfence: [yearData.min],
+                upperfence: [yearData.max],
+                boxpoints: false,
+                fillcolor: 'rgba(173, 216, 230, 0.5)',
+                line: { color: 'rgb(8, 81, 156)' }
+            }));
+
+            const layout = {
+                title: `Distribution par année - ${title}`,
+                yaxis: {
+                    title: 'Position (rang normalisé)',
+                    range: [1.1, 0],
+                    showgrid: true,
+                    zeroline: false
+                },
+                xaxis: { title: 'Année' },
+                margin: { l: 60, r: 30, b: 80, t: 100 },
+                showlegend: false,
+                shapes: userRank > 0 ? [{
+                    type: 'line',
+                    x0: allData[0].year - 0.5,
+                    x1: allData[allData.length - 1].year + 0.5,
+                    y0: userTransformed,
+                    y1: userTransformed,
+                    line: { color: '#e74c3c', width: 3, dash: 'dash' }
+                }] : [],
+                annotations: userRank > 0 ? [{
+                    x: allData[Math.floor(allData.length / 2)].year,
+                    y: userTransformed,
+                    text: `Votre rang: ${userRank}`,
+                    showarrow: true,
+                    arrowhead: 2,
+                    bgcolor: '#e74c3c',
+                    font: { color: 'white' }
+                }] : []
+            };
+
+            Plotly.newPlot('plot', traces, layout, { responsive: true, autosize: true });
+            document.getElementById('chartContainer').classList.remove('hidden');
+        }
+
+
+        async function createBarPlot(specialite, selectedVille, years, userRank, userTransformed) {
+            try {
+                const totalCandidates = {
+                    2019: 8500, 2020: 8600, 2021: 8700,
+                    2022: 8750, 2023: 8850, 2024: 8900
+                };
+
+                const villesToAnalyze = selectedVille ? [selectedVille] : villesData;
+                const dataItems = [];
+
+                for (const ville of villesToAnalyze) {
+                    for (const year of years) {
+                        try {
+                            const response = await fetch(`/api/stats/${encodeURIComponent(specialite)}?annee=${year}&ville=${encodeURIComponent(ville)}`);
+                            if (response.ok) {
+                                const data = await response.json();
+                                const total = totalCandidates[year];
+                                const transform = (rang) => (rang - 1) / (total - 1);
+
+                                dataItems.push({
+                                    label: `${ville} ${year}`,
+                                    ville,
+                                    year,
+                                    min: transform(data.rang_min || 1),
+                                    max: transform(data.rang_max || total),
+                                    minOrig: data.rang_min || 1,
+                                    maxOrig: data.rang_max || total
+                                });
+                            }
+                        } catch (e) {
+                            console.warn(`Erreur pour ${ville}-${year}:`, e);
+                        }
+                    }
+                }
+
+                if (dataItems.length === 0) {
+                    document.getElementById('chartContainerVilles').classList.add('hidden');
+                    return;
+                }
+
+                // Tri selon (min+max)/2
+                dataItems.sort((a, b) => ((a.min + a.max) / 2) - ((b.min + b.max) / 2));
+
+                const xLabels = dataItems.map(d => d.label);
+                const baseVals = dataItems.map(d => d.min);
+                const heights = dataItems.map(d => d.max - d.min);
+                const hoverText = dataItems.map(d =>
+                    `${d.ville} ${d.year}<br>Rang ${d.minOrig} → ${d.maxOrig}`
+                );
+
+                const trace = {
+                    x: xLabels,
+                    y: heights,
+                    base: baseVals,
+                    type: 'bar',
+                    text: hoverText,
+                    hoverinfo: 'text',
+                    marker: {
+                        color: 'rgba(55,128,191,0.6)',
+                        line: {
+                            color: 'rgba(55,128,191,1.0)',
+                            width: 1
+                        }
+                    }
+                };
+
+                const layout = {
+                    title: `Plage de rangs par ville - ${specialite}`,
+                    barmode: 'overlay',
+                    xaxis: { title: 'Ville / Année' },
+                    yaxis: {
+                        title: 'Rang normalisé (0 = 1er, 1 = dernier)',
+                        range: [1, 0]
+                    },
+                    height: 650,
+                    shapes: userRank > 0 ? [{
+                        type: 'line',
+                        x0: 0,
+                        x1: 1,
+                        xref: 'paper',
+                        y0: userTransformed,
+                        y1: userTransformed,
+                        line: {
+                            color: '#e74c3c',
+                            width: 2,
+                            dash: 'dash'
+                        }
+                    }] : [],
+                };
+
+                Plotly.newPlot('plotVilles', [trace], layout, { responsive: true, autosize: true });
+                document.getElementById('chartContainerVilles').classList.remove('hidden');
+            } catch (err) {
+                console.error('Erreur dans createBarPlot:', err);
+            }
+        }
+
+
+        function showLoading(show) {
+            const loading = document.getElementById('loading');
+            const results = document.getElementById('results');
+            show ? results.classList.remove('hidden') && loading.classList.remove('hidden') : loading.classList.add('hidden');
+        }
+
+        function showError(message) {
+            document.getElementById('error').textContent = message;
+            document.getElementById('error').classList.remove('hidden');
+            document.getElementById('results').classList.remove('hidden');
+        }
+
+        function hideError() {
+            document.getElementById('error').classList.add('hidden');
+        }
+
+        loadInitialData();
+    </script>
+</body>
+
+</html>
