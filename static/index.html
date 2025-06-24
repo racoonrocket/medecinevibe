@@ -321,7 +321,7 @@
 
             try {
                 const years = [2019, 2020, 2021, 2022, 2023, 2024];
-                const totalCandidates = { 2019: 8500, 2020: 8600, 2021: 8700, 2022: 8750, 2023: 8850, 2024: 8900 };
+                const totalCandidates = { 2019: 8308, 2020: 8424, 2021: 8579, 2022: 8854, 2023: 9312, 2024: 8900 };
                 const allData = [];
 
                 for (const year of years) {
@@ -373,7 +373,7 @@
         }
 
         function createMobilePlot(allData, userRank, title) {
-            const totalCandidates = { 2019: 8500, 2020: 8600, 2021: 8700, 2022: 8750, 2023: 8850, 2024: 8900 };
+            const totalCandidates = { 2019: 8308, 2020: 8424, 2021: 8579, 2022: 8854, 2023: 9312, 2024: 8900 };
             const currentTotal = 8900;
 
             // Normaliser les rangs par rapport au total actuel (8900)
@@ -536,8 +536,8 @@
         async function createBarPlot(specialite, selectedVille, years, userRank, userTransformed) {
             try {
                 const totalCandidates = {
-                    2019: 8500, 2020: 8600, 2021: 8700,
-                    2022: 8750, 2023: 8850, 2024: 8900
+                    2019: 8308, 2020: 8424, 2021: 8579,
+                    2022: 8854, 2023: 9312, 2024: 8900
                 };
 
                 const villesToAnalyze = selectedVille ? [selectedVille] : villesData;
@@ -631,7 +631,7 @@
 
         function showStatsSummary(allData, userRank) {
             const summary = document.getElementById('statsSummary');
-            const totalCandidates = { 2019: 8500, 2020: 8600, 2021: 8700, 2022: 8750, 2023: 8850, 2024: 8900 };
+            const totalCandidates = { 2019: 8308, 2020: 8424, 2021: 8579, 2022: 8854, 2023: 9312, 2024: 8900 };
             const currentTotal = 8900;
 
             // Normaliser les statistiques
