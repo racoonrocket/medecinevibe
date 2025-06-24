@@ -111,6 +111,109 @@
             border-radius: 5px;
             margin: 10px 0;
         }
+
+        .stats-summary {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .stat-item {
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .stat-label {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .stat-value {
+            color: #3498db;
+            font-weight: 600;
+        }
+
+        /* Styles mobiles */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+                font-size: 14px;
+            }
+
+            .header {
+                padding: 20px 15px;
+            }
+
+            .header h1 {
+                font-size: 1.5em;
+                margin-bottom: 5px;
+            }
+
+            .header p {
+                font-size: 0.9em;
+                opacity: 0.9;
+            }
+
+            .form-section {
+                padding: 20px 15px;
+            }
+
+            .form-row {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .form-group {
+                min-width: auto;
+            }
+
+            .form-group label {
+                font-size: 0.9em;
+            }
+
+            .form-group select,
+            .form-group input {
+                padding: 12px;
+            }
+
+            .btn-analyze {
+                padding: 15px 30px;
+                width: 100%;
+                margin-top: 10px;
+            }
+
+            .results-section {
+                padding: 15px;
+            }
+
+            .chart-container {
+                padding: 10px;
+                margin-bottom: 15px;
+            }
+
+            .stats-summary {
+                display: block;
+                padding: 15px;
+                margin-bottom: 15px;
+                font-size: 0.9em;
+            }
+
+            .stat-item {
+                margin-bottom: 8px;
+            }
+
+            .error {
+                font-size: 0.9em;
+            }
+
+            /* Masquer le second graphique sur mobile */
+            #chartContainerVilles {
+                display: none !important;
+            }
+        }
     </style>
 </head>
 
@@ -150,6 +253,7 @@
         <div id="results" class="results-section hidden">
             <div id="loading" class="loading hidden">Chargement...</div>
             <div id="error" class="error hidden"></div>
+            <div id="statsSummary" class="stats-summary hidden"></div>
             <div id="chartContainer" class="chart-container hidden">
                 <div id="plot" style="width:100%; height:500px;"></div>
             </div>
@@ -161,6 +265,12 @@
 
     <script>
         let specialitesData = [], villesData = [];
+        let isMobile = window.innerWidth <= 768;
+
+        // Détection du redimensionnement
+        window.addEventListener('resize', () => {
+            isMobile = window.innerWidth <= 768;
+        });
 
         async function loadInitialData() {
             try {
@@ -231,22 +341,144 @@
                             max: transform(data.rang_max || total),
                             minOrig: data.rang_min || 1,
                             maxOrig: data.rang_max || total,
-                            medianOrig: data.rang_median
+                            medianOrig: data.rang_median,
+                            rang_min: data.rang_min || 1,
+                            rang_max: data.rang_max || total,
+                            rang_median: data.rang_median
                         });
                     }
                 }
 
                 if (allData.length === 0) throw new Error('Aucune donnée trouvée');
 
-                const userTransformed = userRank / 8899
-                createBoxPlot(allData, userTransformed, userRank, specialite + (ville ? ` - ${ville}` : ''));
-                await createBarPlot(specialite, ville, years, userRank, userTransformed);
+                const userTransformed = userRank / 8899;
+
+                if (isMobile) {
+                    // Version mobile simplifiée
+                    createMobilePlot(allData, userRank, specialite + (ville ? ` - ${ville}` : ''));
+                    showStatsSummary(allData, userRank);
+                } else {
+                    // Version desktop complète
+                    createBoxPlot(allData, userTransformed, userRank, specialite + (ville ? ` - ${ville}` : ''));
+                    await createBarPlot(specialite, ville, years, userRank, userTransformed);
+                }
 
             } catch (error) {
                 showError('Erreur: ' + error.message);
             } finally {
                 showLoading(false);
             }
+        }
+
+        function createMobilePlot(allData, userRank, title) {
+            const totalCandidates = { 2019: 8500, 2020: 8600, 2021: 8700, 2022: 8750, 2023: 8850, 2024: 8900 };
+            const currentTotal = 8900;
+
+            // Normaliser les rangs par rapport au total actuel (8900)
+            const normalizedData = allData.map(d => ({
+                year: d.year,
+                rang_min_normalized: Math.round((d.rang_min / totalCandidates[d.year]) * currentTotal),
+                rang_max_normalized: Math.round((d.rang_max / totalCandidates[d.year]) * currentTotal),
+                rang_min_original: d.rang_min,
+                rang_max_original: d.rang_max,
+                total_year: totalCandidates[d.year]
+            }));
+
+            // Trace pour les rangs minimum normalisés
+            const minTrace = {
+                x: normalizedData.map(d => d.year),
+                y: normalizedData.map(d => d.rang_min_normalized),
+                type: 'scatter',
+                mode: 'lines+markers',
+                name: 'Rang Min (normalisé)',
+                line: { color: '#27ae60', width: 3 },
+                marker: { size: 8 },
+                hovertemplate: '%{x}: Rang %{y}<br>Original: %{customdata.original}/%{customdata.total}<extra></extra>',
+                customdata: normalizedData.map(d => ({
+                    original: d.rang_min_original,
+                    total: d.total_year
+                }))
+            };
+
+            // Trace pour les rangs maximum normalisés
+            const maxTrace = {
+                x: normalizedData.map(d => d.year),
+                y: normalizedData.map(d => d.rang_max_normalized),
+                type: 'scatter',
+                mode: 'lines+markers',
+                name: 'Rang Max (normalisé)',
+                line: { color: '#e74c3c', width: 3 },
+                marker: { size: 8 },
+                hovertemplate: '%{x}: Rang %{y}<br>Original: %{customdata.original}/%{customdata.total}<extra></extra>',
+                customdata: normalizedData.map(d => ({
+                    original: d.rang_max_original,
+                    total: d.total_year
+                }))
+            };
+
+            // Zone entre min et max normalisés
+            const fillTrace = {
+                x: [...normalizedData.map(d => d.year), ...normalizedData.map(d => d.year).reverse()],
+                y: [...normalizedData.map(d => d.rang_min_normalized), ...normalizedData.map(d => d.rang_max_normalized).reverse()],
+                type: 'scatter',
+                mode: 'lines',
+                fill: 'toself',
+                fillcolor: 'rgba(52, 152, 219, 0.1)',
+                line: { color: 'transparent' },
+                name: 'Zone accessible',
+                showlegend: false,
+                hoverinfo: 'skip'
+            };
+
+            const traces = [fillTrace, minTrace, maxTrace];
+
+            // Ligne pour le rang de l'utilisateur
+            if (userRank > 0) {
+                const userTrace = {
+                    x: normalizedData.map(d => d.year),
+                    y: Array(normalizedData.length).fill(userRank),
+                    type: 'scatter',
+                    mode: 'lines',
+                    name: `Votre rang: ${userRank}`,
+                    line: { color: '#f39c12', width: 3, dash: 'dash' },
+                    marker: { size: 6 },
+                    hovertemplate: 'Votre rang: %{y}<extra></extra>'
+                };
+                traces.push(userTrace);
+            }
+
+            const layout = {
+                title: {
+                    text: title + ' (rangs normalisés /8900)',
+                    font: { size: 14 }
+                },
+                yaxis: {
+                    title: 'Rang normalisé /8900',
+                    autorange: 'reversed',
+                    showgrid: true,
+                    zeroline: false
+                },
+                xaxis: {
+                    title: 'Année',
+                    dtick: 1
+                },
+                margin: { l: 50, r: 30, b: 80, t: 80 },
+                showlegend: true,
+                legend: {
+                    orientation: 'h',
+                    x: 0,
+                    y: -0.25,
+                    font: { size: 10 }
+                },
+                hovermode: 'closest',
+                height: 400
+            };
+
+            Plotly.newPlot('plot', traces, layout, {
+                responsive: true,
+                displayModeBar: false
+            });
+            document.getElementById('chartContainer').classList.remove('hidden');
         }
 
         function createBoxPlot(allData, userTransformed, userRank, title) {
@@ -299,7 +531,6 @@
             document.getElementById('chartContainer').classList.remove('hidden');
         }
 
-
         async function createBarPlot(specialite, selectedVille, years, userRank, userTransformed) {
             try {
                 const totalCandidates = {
@@ -340,7 +571,6 @@
                     return;
                 }
 
-                // Tri selon (min+max)/2
                 dataItems.sort((a, b) => ((a.min + a.max) / 2) - ((b.min + b.max) / 2));
 
                 const xLabels = dataItems.map(d => d.label);
@@ -397,6 +627,57 @@
             }
         }
 
+        function showStatsSummary(allData, userRank) {
+            const summary = document.getElementById('statsSummary');
+            const totalCandidates = { 2019: 8500, 2020: 8600, 2021: 8700, 2022: 8750, 2023: 8850, 2024: 8900 };
+            const currentTotal = 8900;
+
+            // Normaliser les statistiques
+            const normalizedData = allData.map(d => ({
+                rang_min_normalized: Math.round((d.rang_min / totalCandidates[d.year]) * currentTotal),
+                rang_max_normalized: Math.round((d.rang_max / totalCandidates[d.year]) * currentTotal),
+                year: d.year,
+                rang_min_original: d.rang_min,
+                rang_max_original: d.rang_max
+            }));
+
+            const avgMin = Math.round(normalizedData.reduce((sum, d) => sum + d.rang_min_normalized, 0) / normalizedData.length);
+            const avgMax = Math.round(normalizedData.reduce((sum, d) => sum + d.rang_max_normalized, 0) / normalizedData.length);
+            const latestYear = normalizedData[normalizedData.length - 1];
+
+            let positionText = '';
+            if (userRank > 0) {
+                if (userRank <= avgMin) {
+                    positionText = '✅ Excellent - Vous êtes dans la zone sûre';
+                } else if (userRank <= avgMax) {
+                    positionText = '⚠️ Possible - Vous êtes dans la zone accessible';
+                } else {
+                    positionText = '❌ Difficile - Votre rang est au-dessus de la fourchette';
+                }
+            }
+
+            summary.innerHTML = `
+                <div class="stat-item">
+                    <span class="stat-label">Rang minimum moyen (normalisé):</span>
+                    <span class="stat-value">${avgMin}</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Rang maximum moyen (normalisé):</span>
+                    <span class="stat-value">${avgMax}</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Dernière année (${latestYear.year}) normalisé:</span>
+                    <span class="stat-value">${latestYear.rang_min_normalized} - ${latestYear.rang_max_normalized}</span>
+                </div>
+                <div class="stat-item" style="font-size: 0.8em; color: #666;">
+                    <span class="stat-label">Original ${latestYear.year}:</span>
+                    <span class="stat-value">${latestYear.rang_min_original} - ${latestYear.rang_max_original}</span>
+                </div>
+                ${userRank > 0 ? `<div class="stat-item" style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #ddd;"><span style="font-weight: 600;">${positionText}</span></div>` : ''}
+            `;
+
+            summary.classList.remove('hidden');
+        }
 
         function showLoading(show) {
             const loading = document.getElementById('loading');
