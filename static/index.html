@@ -253,8 +253,8 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="userRank">Votre rang / 8900</label>
-                        <input type="number" id="userRank" placeholder="Ex: 1500" min="1" max="8900" required />
+                        <label for="userRank">Votre rang / 8958</label>
+                        <input type="number" id="userRank" placeholder="Ex: 1500" min="1" max="8958" required />
                     </div>
                     <div class="form-group">
                         <button type="submit" class="btn-analyze">Analyser</button>
@@ -332,7 +332,7 @@
 
             try {
                 const years = [2019, 2020, 2021, 2022, 2023, 2024];
-                const totalCandidates = { 2019: 8308, 2020: 8424, 2021: 8579, 2022: 8854, 2023: 9312, 2024: 8900 };
+                const totalCandidates = { 2019: 8308, 2020: 8424, 2021: 8579, 2022: 8854, 2023: 9312, 2024: 7817 };
                 const allData = [];
 
                 for (const year of years) {
@@ -384,10 +384,10 @@
         }
 
         function createMobilePlot(allData, userRank, title) {
-            const totalCandidates = { 2019: 8308, 2020: 8424, 2021: 8579, 2022: 8854, 2023: 9312, 2024: 8900 };
-            const currentTotal = 8900;
+            const totalCandidates = { 2019: 8308, 2020: 8424, 2021: 8579, 2022: 8854, 2023: 9312, 2024: 7817 };
+            const currentTotal = 8958;
 
-            // Normaliser les rangs par rapport au total actuel (8900)
+            // Normaliser les rangs par rapport au total actuel (8958)
             const normalizedData = allData.map(d => ({
                 year: d.year,
                 rang_min_normalized: Math.round((d.rang_min / totalCandidates[d.year]) * currentTotal),
@@ -462,11 +462,11 @@
 
             const layout = {
                 title: {
-                    text: title + ' (rangs normalisés /8900)',
+                    text: title + ' (rangs normalisés /8958)',
                     font: { size: 14 }
                 },
                 yaxis: {
-                    title: 'Rang normalisé /8900',
+                    title: 'Rang normalisé /8958',
                     autorange: 'reversed',
                     showgrid: true,
                     zeroline: false
@@ -548,7 +548,7 @@
             try {
                 const totalCandidates = {
                     2019: 8308, 2020: 8424, 2021: 8579,
-                    2022: 8854, 2023: 9312, 2024: 8900
+                    2022: 8854, 2023: 9312, 2024: 7817
                 };
 
                 const villesToAnalyze = selectedVille ? [selectedVille] : villesData;
@@ -642,8 +642,8 @@
 
         function showStatsSummary(allData, userRank) {
             const summary = document.getElementById('statsSummary');
-            const totalCandidates = { 2019: 8308, 2020: 8424, 2021: 8579, 2022: 8854, 2023: 9312, 2024: 8900 };
-            const currentTotal = 8900;
+            const totalCandidates = { 2019: 8308, 2020: 8424, 2021: 8579, 2022: 8854, 2023: 9312, 2024: 7817 };
+            const currentTotal = 8958;
 
             // Normaliser les statistiques
             const normalizedData = allData.map(d => ({
@@ -712,11 +712,15 @@
     </script>
     <footer
         style="font-size: 13px; color: #555; text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #ccc;">
-        <p>🔒 Les données affichées ont étéanonymisées et catégorisées> par ville et
+        <p> Les données affichées ont été anonymisées et catégorisées> par ville et
             spécialité avant d’être chargées sur le serveur.</p>
-        <p>✅ Ce site respecte le RGPD : aucune donnée personnelle n’est collectée.</p>
-        <p style="font-style: italic;">⚠️ Ce site est en cours de développement (WIP). Des erreurs ou approximations
+        <p> Ce site respecte le RGPD : aucune donnée personnelle n’est collectée.</p>
+        <p style="font-style: italic;"> Ce site est en cours de développement (WIP). Des erreurs ou approximations
             peuvent exister.</p>
+        <a href="privacy.html">Confidentialité</a> |
+        <a href="about.html">À propos</a> |
+        <a href="legal.html">Mentions légales</a> |
+        <a href="terms.html">CGU</a>
     </footer>
 </body>
 
