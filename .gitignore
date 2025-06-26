@@ -6,7 +6,7 @@
 **/*~
 
 # Données locales
-/data/*.csv
+
 
 # Outils
 Cargo.lock
