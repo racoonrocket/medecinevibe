@@ -29,3 +29,28 @@ pub struct RankingResponse {
     pub villes_possibles: Vec<String>,
     pub stats_specialite: Statistics,
 }
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum Mode {
+    Brute,
+    SansCesp,
+    Ajuste,
+}
+
+impl Mode {
+    pub fn from_str(s: &str) -> Self {
+        match s.to_lowercase().as_str() {
+            "sans cesp" => Mode::SansCesp,
+            "ajusté" | "ajuste" => Mode::Ajuste,
+            _ => Mode::Brute, // _ au lieu de *
+        }
+    }
+    
+    pub fn get_filename_suffix(&self) -> &str { // retirer l'* devant filename
+        match self {
+            Mode::Brute => "brute",
+            Mode::SansCesp => "sans_cesp", 
+            Mode::Ajuste => "ajuste",
+        }
+    }
+}

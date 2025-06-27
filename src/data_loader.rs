@@ -23,7 +23,7 @@ pub static VILLE_INDEX: Lazy<HashMap<String, Vec<usize>>> = Lazy::new(|| {
 fn load_csv_data() -> Result<Vec<Record>> {
     println!("Chargement des données CSV...");
     
-    let mut reader = csv::Reader::from_path("data/donnees_medicales_enrichies2.csv")?;
+    let mut reader = csv::Reader::from_path("data/donnees_medicales_enrichies2_brute.csv")?;
     let mut records = Vec::new();
     
     for result in reader.deserialize() {
