@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Méthodologie - Internat médecine - ECN - Analyse des Rangs</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f8f9fa;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            background: linear-gradient(45deg, #2c3e50, #3498db);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            border-radius: 10px 10px 0 0;
+            position: relative;
+        }
+
+        .btn-back {
+            position: absolute;
+            left: 30px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 16px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 0.9em;
+            transition: all 0.3s;
+        }
+
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .content-section {
+            padding: 30px;
+            line-height: 1.6;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            color: #2c3e50;
+            margin: 30px 0 15px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #3498db;
+        }
+
+        h3 {
+            color: #34495e;
+            margin: 20px 0 10px 0;
+        }
+
+        p {
+            margin-bottom: 15px;
+            color: #555;
+        }
+
+        strong {
+            color: #2c3e50;
+        }
+
+        .example-box {
+            background: #f8f9fa;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 5px 5px 0;
+        }
+
+        /* Styles mobiles */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .header {
+                padding: 20px 15px;
+            }
+
+            .btn-back {
+                position: static;
+                transform: none;
+                margin-bottom: 15px;
+                display: inline-block;
+            }
+
+            .content-section {
+                padding: 20px 15px;
+            }
+
+            h1 {
+                font-size: 1.5em;
+            }
+
+            h2 {
+                font-size: 1.3em;
+                margin: 25px 0 10px 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="index.html" class="btn-back">← Retour</a>
+            <h1>📊 Méthodologie</h1>
+            <p style="color: white;">Explication du traitement des données CESP</p>
+        </div>
+
+        <div class="content-section">
+            <h2>Source des données</h2>
+            <p>Toutes les données présentes sur ce site sont extraites de <strong>Légifrance</strong>, la base de
+                données officielle du droit français.</p>
+
+            <h2>Problématique des CESP</h2>
+            <p>Les listes publiées officiellement contiennent les <strong>CESP</strong> (Contrats d'Engagement de
+                Service Public), ce qui fausse la distribution réelle des rangs par spécialité.</p>
+
+            <p>Pour corriger cette distorsion, l'idéal aurait été d'avoir accès aux rangs spécifiquement concernés par
+                les CESP. Cependant, cette information n'est pas disponible en ligne. Seul le <strong>nombre de postes
+                    ouverts</strong> (Annexe II) pour les CESP par ville et spécialité est accessible sur Légifrance.
+            </p>
+
+            <h2>Solution mise en œuvre</h2>
+            <p>Pour pallier cette limitation, nous avons développé <strong>3 modes de traitement</strong> du dataset :
+            </p>
+
+            <h3>Mode "Brute"</h3>
+            <p>Les listes sont utilisées telles quelles, sans aucun traitement.</p>
+
+            <h3>Mode "Sans CESP"</h3>
+            <p>Dans ce mode, pour chaque spécialité comptant <strong>x postes CESP</strong>, nous supprimons ce nombre
+                de postes <strong>en partant du bas du classement</strong>.</p>
+
+            <div class="example-box">
+                <strong>Exemple concret :</strong><br>
+                • Spécialité avec 2 postes CESP<br>
+                • 7 postes au total<br>
+                • Rangs initiaux : [2499, 2500, 5500, 5600, 5700, 5750, 6700]<br>
+                • Rangs après traitement : [2499, 2500, 5500, 5600, 5700] <em>(suppression des 2 derniers rangs)</em>
+            </div>
+
+            <h3>Mode "Ajusté"</h3>
+
+            <p>C'est comme le mode Sans CESP mais plus léger, car on enlève que les valeurs aberrantes statistiquement
+                parlant.</p>
+
+            <p>Supprimer toutes les valeurs comme en mode "Sans CESP" n'est pas forcément juste, notamment pour des
+                spécialités comme médecine générale où le nombre de CESP est très important. Il est probable que des
+                CESP soient présents dans des rangs intermédiaires et pas uniquement en queue de distribution. Le mode
+                ajusté est là pour pallier ce problème.</p>
+
+            <p>Nous avons essayé de repérer les valeurs aberrantes dans le dataset, avec différentes méthodes (Z-score,
+                MAD...). On repère un drop dans la distribution des derniers rangs. L'objectif est de supprimer
+                uniquement pour les spécialités à CESP des rangs aberrants.</p>
+
+            <p>J'ai donc décidé de prendre un score MAD au point d'inflexion bas. Partant du principe que ce point
+                correspond au
+                moment où on supprime les valeurs de queue, mais qu'on n'a pas commencé à toucher au gros de la
+                distribution elle-même.</p>
+
+            <img src="MAD.JPG" alt="Place supprimées fonction de MAD avec quartile 80" id="monImage">
+
+            <h2>Conclusion</h2>
+            <p>La méthode SAFE/sans CESP est vraiment une méthode trop conservatrice mais étant donné qu'on parle d'un
+                concours c'est la plus sur. La méthode ajusté devrait bien palier au problème des CESP, et au moins
+                préserver une 'justesse statistique' en tout cas c'est le but.</p>
+        </div>
+    </div>
+</body>
+
+</html>

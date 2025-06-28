@@ -9,7 +9,7 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
 use crate::stats::{calculate_statistics, estimate_ranking};
-use crate::models::{Statistics, RankingResponse};
+use crate::models::*;
 
 #[derive(Deserialize)]
 pub struct CalculateQuery {
@@ -38,8 +38,10 @@ pub async fn get_stats(
     let annee = params.get("annee")
         .and_then(|s| s.parse::<u16>().ok());
     let ville = params.get("ville");
+    let mode_str = params.get("mode").map(|s| s.as_str()).unwrap_or("brute");
+    let mode = Mode::from_str(mode_str);
     
-    let mut records = get_records_by_specialite(&specialite, annee);
+    let mut records = get_records_by_specialite_mode(&specialite, annee, mode);
     
     if let Some(ville_filter) = ville {
         if !ville_filter.is_empty() {
@@ -53,7 +55,9 @@ pub async fn get_stats(
         return Err(StatusCode::NOT_FOUND);
     }
     
-    Ok(Json(calculate_statistics(&records)))
+    // MODIFICATION ICI : convertir Vec<Record> en Vec<&Record>
+    let record_refs: Vec<&Record> = records.iter().collect();
+    Ok(Json(calculate_statistics(&record_refs)))
 }
 
 pub async fn get_villes() -> Json<Vec<String>> {
@@ -85,7 +89,6 @@ pub async fn health_check() -> &'static str {
     "OK"
 }
 
-// Nouvelle route pour tester
 pub async fn get_min_max(
     Path((specialite, ville, annee)): Path<(String, String, u16)>,
 ) -> Result<Json<serde_json::Value>, StatusCode> {
@@ -101,5 +104,3 @@ pub async fn get_min_max(
         Err(StatusCode::NOT_FOUND)
     }
 }
-
-
