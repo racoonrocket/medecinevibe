@@ -44,13 +44,11 @@ async fn main() {
         .route("/villes", get(get_villes))
         .route("/minmax/:specialite/:ville/:annee", get(get_min_max));
     
-    // Application complète
-    let app = Router::new()
+    let app = Router::<()>::new()
         .nest("/api", api_routes)
-        // Sert les fichiers statiques (HTML, CSS, JS)
         .nest_service("/", ServeDir::new("static"))
         .layer(ServiceBuilder::new().layer(cors));
-    
+        
    
     let port = std::env::var("PORT")
     .unwrap_or_else(|_| "3000".to_string()) 
