@@ -44,11 +44,11 @@ async fn main() {
         .route("/villes", get(get_villes))
         .route("/minmax/:specialite/:ville/:annee", get(get_min_max));
     
-    let app = Router::<()>::new()
-        .nest("/api", api_routes)
-        .nest_service("/", ServeDir::new("static"))
-        .layer(ServiceBuilder::new().layer(cors));
-        
+let app = Router::<()>::new()
+    .nest("/api", api_routes)
+    .nest_service("/", ServeDir::new("static"))
+    .layer(ServiceBuilder::new().layer(cors));
+    
    
     let port = std::env::var("PORT")
     .unwrap_or_else(|_| "3000".to_string()) 
@@ -56,13 +56,13 @@ async fn main() {
     .expect("PORT doit être un nombre");
 
     let addr = SocketAddr::from(([0, 0, 0, 0], port)); 
-    println!("🌐 Serveur en écoute sur http://0.0.0.0:{}", port);
+
+
     println!("🌐 Serveur en écoute sur http://{}", addr);
 
-    /*
-    let addr = SocketAddr::from(([127, 0, 0, 1], 8080));
     let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
-    println!("🌐 Serveur en écoute sur http://localhost:8080");
+
     axum::serve(listener, app).await.unwrap();
-    */
+
+
 }
