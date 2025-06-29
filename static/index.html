@@ -7,7 +7,7 @@
     <title>Rangs Limites EDN 2025 - Internat + CESP</title>
     <meta name="description"
         content="Simulez vos chances d'internat avec notre outil EDN 2025. Comparez votre rang aux années précédentes avec et sans CESP pour toutes les spécialités.">
-    <script defer src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
     <style>
         * {
             margin: 0;
@@ -138,6 +138,85 @@
             font-weight: 600;
         }
 
+        /* boutton slider 3 state */
+        .slider {
+            width: 200px;
+            height: 40px;
+            background: #e5e5e7;
+            border-radius: 20px;
+            position: relative;
+            cursor: pointer;
+            margin: 10px 0;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .thumb {
+            width: 60px;
+            height: 32px;
+            background: #007AFF;
+            border-radius: 16px;
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            transition: left 0.3s;
+        }
+
+        .labels {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            height: 100%;
+            font: bold 11px Arial;
+            color: #666;
+            pointer-events: none;
+        }
+
+        .state-0 .thumb {
+            left: 4px;
+        }
+
+        .state-1 .thumb {
+            left: 70px;
+        }
+
+        .state-2 .thumb {
+            left: 136px;
+        }
+
+        .status {
+            color: #666;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .btn-methods {
+            background: #95a5a6;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1em;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .btn-methods:hover {
+            background: #7f8c8d;
+        }
+
+        .form-group:nth-last-child(-n+2) {
+            /* 2 derniers form-group (boutons) */
+            align-self: flex-end;
+            /* ou margin-top: auto; */
+        }
+
+        .form-group:nth-child(4) {
+            /* le form-group du slider */
+            margin-left: 30px;
+            /* ou 40px */
+        }
+
+
         /* Styles mobiles */
         @media (max-width: 768px) {
             body {
@@ -211,6 +290,29 @@
                 font-size: 0.9em;
             }
 
+            /*boutton mais pour telephone */
+            .slider {
+                width: 180px;
+                height: 36px;
+            }
+
+            .thumb {
+                width: 52px;
+                height: 28px;
+            }
+
+            .state-0 .thumb {
+                left: 4px;
+            }
+
+            .state-1 .thumb {
+                left: 64px;
+            }
+
+            .state-2 .thumb {
+                left: 124px;
+            }
+
             /* Masquer le second graphique sur mobile */
             #chartContainerVilles {
                 display: none !important;
@@ -275,7 +377,23 @@
                         <input type="number" id="userRank" placeholder="Ex: 1500" min="1" max="8958" required />
                     </div>
                     <div class="form-group">
+                        <label>Mode d'analyse</label>
+                        <div class="slider state-0" ontouchstart="nextSlider()" onclick="nextSlider()">
+                            <div class="thumb"></div>
+                            <div class="labels">
+                                <span>Brute</span>
+                                <span style="text-decoration: line-through;">CESP</span>
+                                <span>Ajusté</span>
+                            </div>
+                        </div>
+                        <div class="status" id="sliderStatus">Mode: Brute</div>
+                    </div>
+                    <div class="form-group">
                         <button type="submit" class="btn-analyze">Analyser</button>
+                    </div>
+                    <div class="form-group">
+                        <button type="button" class="btn-methods"
+                            onclick="window.open('methods.html', '_blank')">Méthodes</button>
                     </div>
                 </div>
             </form>
@@ -295,6 +413,22 @@
     </div>
 
     <script>
+        // Slider 3 états
+        let sliderState = 0;
+        const sliderLabels = ['Brute', 'Sans CESP', 'Ajuste'];
+
+        function nextSlider() {
+            sliderState = (sliderState + 1) % 3;
+            document.querySelector('.slider').className = `slider state-${sliderState}`;
+            document.getElementById('sliderStatus').textContent = `Mode: ${sliderLabels[sliderState]}`;
+            /* No need for this shit
+            fetch('http://localhost:8080/state', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ state: sliderLabels[sliderState].toLowerCase() })
+            }).catch(() => { }); // Ignore erreurs réseau 
+            */
+        }
         let specialitesData = [], villesData = [];
         let isMobile = window.innerWidth <= 768;
 
@@ -356,7 +490,7 @@
                 for (const year of years) {
                     let endpoint = `/api/stats/${encodeURIComponent(specialite)}?annee=${year}`;
                     if (ville) endpoint += `&ville=${encodeURIComponent(ville)}`;
-
+                    endpoint += `&mode=${encodeURIComponent(sliderLabels[sliderState].toLowerCase())}`;
                     const response = await fetch(endpoint);
                     if (response.ok) {
                         const data = await response.json();
@@ -575,7 +709,7 @@
                 for (const ville of villesToAnalyze) {
                     for (const year of years) {
                         try {
-                            const response = await fetch(`/api/stats/${encodeURIComponent(specialite)}?annee=${year}&ville=${encodeURIComponent(ville)}`);
+                            const response = await fetch(`/api/stats/${encodeURIComponent(specialite)}?annee=${year}&ville=${encodeURIComponent(ville)}&mode=${encodeURIComponent(sliderLabels[sliderState].toLowerCase())}`);
                             if (response.ok) {
                                 const data = await response.json();
                                 const total = totalCandidates[year];
