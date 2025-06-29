@@ -24,6 +24,13 @@ pub struct SpecialitesResponse {
     pub villes: Vec<String>,
 }
 
+fn is_safe_param(param: &str) -> bool {
+    !param.contains("..") 
+    && !param.contains("/") 
+    && param.len() <= 50
+    && !param.trim().is_empty()
+}
+
 pub async fn get_specialites() -> Json<SpecialitesResponse> {
     Json(SpecialitesResponse {
         specialites: get_all_specialites(),
@@ -35,6 +42,16 @@ pub async fn get_stats(
     Path(specialite): Path<String>,
     Query(params): Query<HashMap<String, String>>,
 ) -> Result<Json<Statistics>, StatusCode> {
+    if !is_safe_param(&specialite) {
+        return Err(StatusCode::BAD_REQUEST);
+    }
+    
+    // ✅ AJOUTE - Valider la ville si elle existe
+    if let Some(ville) = &params.get("ville") {
+        if !is_safe_param(ville) {
+            return Err(StatusCode::BAD_REQUEST);
+        }
+    }
     let annee = params.get("annee")
         .and_then(|s| s.parse::<u16>().ok());
     let ville = params.get("ville");
@@ -68,6 +85,18 @@ pub async fn calculate_ranking(
     Path(specialite): Path<String>,
     Query(query): Query<CalculateQuery>,
 ) -> Result<Json<RankingResponse>, StatusCode> {
+
+    if !is_safe_param(&specialite) {
+        return Err(StatusCode::BAD_REQUEST);
+    }
+    
+    // ✅ AJOUTE - Valider la ville si elle existe
+    if let Some(ville) = &query.ville {
+        if !is_safe_param(ville) {
+            return Err(StatusCode::BAD_REQUEST);
+        }
+    }
+
     let mut records = get_records_by_specialite(&specialite, query.annee);
     
     if let Some(ville_filter) = &query.ville {
@@ -92,6 +121,9 @@ pub async fn health_check() -> &'static str {
 pub async fn get_min_max(
     Path((specialite, ville, annee)): Path<(String, String, u16)>,
 ) -> Result<Json<serde_json::Value>, StatusCode> {
+    if !is_safe_param(&specialite) || !is_safe_param(&ville) {
+        return Err(StatusCode::BAD_REQUEST);
+    }
     if let Some((min, max)) = get_min_max_by_specialite_ville_annee(&specialite, &ville, annee) {
         Ok(Json(serde_json::json!({
             "specialite": specialite,

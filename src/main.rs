@@ -6,7 +6,7 @@ mod handlers;
 use axum::{
     routing::get,
     Router,
-    http::Method,
+    http::{Method,HeaderValue},
 };
 use crate::handlers::*;
 use tower::ServiceBuilder;
@@ -31,10 +31,14 @@ async fn main() {
     
     // Configuration CORS pour le frontend
     let cors = CorsLayer::new()
-        .allow_methods([Method::GET, Method::POST])
-        .allow_headers(Any)
-        .allow_origin(Any);
-    
+    .allow_methods([Method::GET, Method::POST])
+    .allow_origin([
+        "https://medecinevibe.fr".parse::<HeaderValue>().unwrap(),
+        "https://www.medecinevibe.fr".parse::<HeaderValue>().unwrap(),
+        "https://medecinevibe.onrender.com".parse::<HeaderValue>().unwrap(),
+        "http://localhost:3000".parse::<HeaderValue>().unwrap(), // Pour le dev local
+    ])
+    .allow_headers(Any);
     // Routes API
     let api_routes = Router::new()
         .route("/specialites", get(get_specialites))
