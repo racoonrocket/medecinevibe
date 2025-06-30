@@ -94,6 +94,40 @@
             border-radius: 0 5px 5px 0;
         }
 
+        /* Section Affiliation discrète */
+        .affiliation-section {
+            background: #f8f9fa;
+            padding: 30px;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .video-container {
+            max-width: 500px;
+            margin: 20px auto;
+            border-radius: 5px;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .affiliation-video {
+            width: 100%;
+            height: auto;
+            display: block;
+            pointer-events: none;
+        }
+
+        .affiliation-link {
+            color: #3498db;
+            text-decoration: none;
+            font-size: 0.95em;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        .affiliation-link:hover {
+            text-decoration: underline;
+        }
+
         /* Styles mobiles */
         @media (max-width: 768px) {
             body {
@@ -115,6 +149,19 @@
                 padding: 20px 15px;
             }
 
+            .affiliation-section {
+                padding: 30px 15px;
+            }
+
+            .affiliation-title {
+                font-size: 1.5em;
+            }
+
+            .affiliation-btn {
+                padding: 12px 30px;
+                font-size: 1.1em;
+            }
+
             h1 {
                 font-size: 1.5em;
             }
@@ -125,6 +172,11 @@
             }
         }
     </style>
+    <!-- Google stuff -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1596518521599869"
+        crossorigin="anonymous"></script>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZRYCK43R7F"></script>
 </head>
 
 <body>
@@ -193,6 +245,21 @@
             <p>La méthode SAFE/sans CESP est vraiment une méthode trop conservatrice mais étant donné qu'on parle d'un
                 concours c'est la plus sur. La méthode ajusté devrait bien palier au problème des CESP, et au moins
                 préserver une 'justesse statistique' en tout cas c'est le but.</p>
+        </div>
+
+        <!-- Section discrète -->
+        <div class="affiliation-section">
+            <div class="video-container" onclick="window.open('https://csgocases.com/r/Azeflow', '_blank')">
+                <video class="affiliation-video" autoplay loop muted playsinline preload="metadata">
+                    <source src="banner.mp4" type="video/mp4">
+                    Votre navigateur ne supporte pas la lecture de vidéos.
+                </video>
+            </div>
+
+            <p style="text-align: center; color: #666; font-size: 0.9em; margin: 5px 0;">
+                <a href="https://votre-lien-affiliation.com" class="affiliation-link" target="_blank"
+                    rel="noopener">Plus d'informations</a>
+            </p>
         </div>
     </div>
 </body>

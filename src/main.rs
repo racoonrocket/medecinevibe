@@ -4,42 +4,52 @@ mod stats;
 mod handlers;
 
 use axum::{
+    http::Method,
     routing::get,
     Router,
-    http::{Method,HeaderValue},
 };
-use crate::handlers::*;
 use tower::ServiceBuilder;
 use tower_http::{
     cors::{CorsLayer, Any},
     services::ServeDir,
 };
+use tower_governor::{
+    governor::GovernorConfigBuilder,
+    GovernorLayer,
+    key_extractor::SmartIpKeyExtractor,
+};
 use std::net::SocketAddr;
-
-use handlers::{get_specialites, get_stats, calculate_ranking, health_check};
+use crate::handlers::*;
 
 #[tokio::main]
 async fn main() {
     println!("🚀 Démarrage du serveur Internat Stats...");
-    
-    // Force le chargement des données au démarrage
-    let _data_len = data_loader::DATA.len();
-    let _specialites_len = data_loader::SPECIALITE_INDEX.len();
-    let _villes_len = data_loader::VILLE_INDEX.len();
-    
-    println!("✅ Serveur prêt !");
-    
-    // Configuration CORS pour le frontend
+
+    let _ = data_loader::DATA.len();
+    let _ = data_loader::SPECIALITE_INDEX.len();
+    let _ = data_loader::VILLE_INDEX.len();
+    println!("✅ Données chargées.");
+
     let cors = CorsLayer::new()
-    .allow_methods([Method::GET, Method::POST])
-    .allow_origin([
-        "https://medecinevibe.fr".parse::<HeaderValue>().unwrap(),
-        "https://www.medecinevibe.fr".parse::<HeaderValue>().unwrap(),
-        "https://medecinevibe.onrender.com".parse::<HeaderValue>().unwrap(),
-        "http://localhost:3000".parse::<HeaderValue>().unwrap(), // Pour le dev local
-    ])
-    .allow_headers(Any);
-    // Routes API
+        .allow_methods([Method::GET, Method::POST])
+        .allow_origin(vec![
+            "https://medecinevibe.fr".parse().unwrap(),
+            "https://www.medecinevibe.fr".parse().unwrap(),
+            "https://medecinevibe.onrender.com".parse().unwrap(),
+            "http://localhost:3000".parse().unwrap(),
+        ])
+        .allow_headers(Any);
+
+    let governor_config = GovernorConfigBuilder::default()
+        .per_second(700)
+        .burst_size(170)
+        .finish()
+        .unwrap();
+
+    let governor_layer = GovernorLayer {
+        config: std::sync::Arc::new(governor_config),
+    };
+
     let api_routes = Router::new()
         .route("/specialites", get(get_specialites))
         .route("/stats/:specialite", get(get_stats))
@@ -47,26 +57,30 @@ async fn main() {
         .route("/health", get(health_check))
         .route("/villes", get(get_villes))
         .route("/minmax/:specialite/:ville/:annee", get(get_min_max));
-    
-let app = Router::<()>::new()
-    .nest("/api", api_routes)
-    .nest_service("/", ServeDir::new("static"))
-    .layer(ServiceBuilder::new().layer(cors));
-    
-   
+
+    let app = Router::new()
+        .nest("/api", api_routes)
+        .nest_service("/", ServeDir::new("static").precompressed_gzip())
+        .layer(
+            ServiceBuilder::new()
+                .layer(governor_layer)
+                .layer(cors),
+        );
+
     let port = std::env::var("PORT")
-    .unwrap_or_else(|_| "3000".to_string()) 
-    .parse::<u16>()
-    .expect("PORT doit être un nombre");
+        .unwrap_or_else(|_| "3000".to_string())
+        .parse::<u16>()
+        .expect("PORT doit être un nombre");
 
-    let addr = SocketAddr::from(([0, 0, 0, 0], port)); 
-
-
+   /* let addr = SocketAddr::from(([0, 0, 0, 0], port)); */
+    let addr = SocketAddr::from(([127, 0, 0, 1], port));
     println!("🌐 Serveur en écoute sur http://{}", addr);
 
-    let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
-
-    axum::serve(listener, app).await.unwrap();
-
-
+    let listener = tokio::net::TcpListener::bind(&addr)
+        .await
+        .expect("Impossible de bind l'adresse");
+    
+    axum::serve(listener, app.into_make_service_with_connect_info::<SocketAddr>())
+        .await
+        .expect("Erreur du serveur");
 }
