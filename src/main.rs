@@ -41,8 +41,8 @@ async fn main() {
         .allow_headers(Any);
 
     let governor_config = GovernorConfigBuilder::default()
-        .per_second(700)
-        .burst_size(170)
+        .per_second(1000)
+        .burst_size(400)
         .finish()
         .unwrap();
 
