@@ -72,8 +72,8 @@ async fn main() {
         .parse::<u16>()
         .expect("PORT doit être un nombre");
 
-   /* let addr = SocketAddr::from(([0, 0, 0, 0], port)); */
-    let addr = SocketAddr::from(([127, 0, 0, 1], port));
+    let addr = SocketAddr::from(([0, 0, 0, 0], port)); 
+    /* let addr = SocketAddr::from(([127, 0, 0, 1], port)); */
     println!("🌐 Serveur en écoute sur http://{}", addr);
 
     let listener = tokio::net::TcpListener::bind(&addr)
