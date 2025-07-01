@@ -41,8 +41,8 @@ async fn main() {
         .allow_headers(Any);
 
     let governor_config = GovernorConfigBuilder::default()
-        .per_second(2000)
-        .burst_size(1000)
+        .per_second(3000)
+        .burst_size(2000)
         .finish()
         .unwrap();
 
@@ -63,7 +63,7 @@ async fn main() {
         .nest_service("/", ServeDir::new("static").precompressed_gzip())
         .layer(
             ServiceBuilder::new()
-                .layer(governor_layer)
+                //.layer(governor_layer)
                 .layer(cors),
         );
 
