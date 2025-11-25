@@ -4,438 +4,335 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Rangs Limites EDN 2025 - Internat + CESP</title>
-    <meta name="description"
-        content="Simulez vos chances d'internat avec notre outil EDN 2025. Comparez votre rang aux années précédentes avec et sans CESP pour toutes les spécialités.">
+    <title>Rangs Limites EDN 2025</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
         * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Animation d'intro */
+        .intro-overlay {
+            position: fixed;
+            inset: 0;
+            background: white;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeOut 0.8s ease 3s forwards;
+        }
+
+        @keyframes fadeOut {
+            to {
+                opacity: 0;
+                pointer-events: none;
+            }
+        }
+
+        .flow-container {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            font-size: 1.2rem;
+            color: #000;
+        }
+
+        .flow-item {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .flow-item.show {
+            animation: slideUp 0.6s ease forwards;
+        }
+
+        @keyframes slideUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .flow-arrow {
+            font-size: 2rem;
+            opacity: 0;
+            animation: fadeInArrow 0.4s ease 1s forwards;
+        }
+
+        @keyframes fadeInArrow {
+            to {
+                opacity: 0.3;
+            }
+        }
+
+        .main-content {
+            opacity: 0;
+            animation: fadeInContent 0.6s ease 3.2s forwards;
+        }
+
+        @keyframes fadeInContent {
+            to {
+                opacity: 1;
+            }
         }
 
         body {
-            font-family: 'Segoe UI', sans-serif;
-            background: #f8f9fa;
-            padding: 20px;
+            background: #fafafa;
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
+        .glass-input {
             background: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e5e5;
+            transition: all 0.2s;
         }
 
-        .header {
-            background: linear-gradient(45deg, #2c3e50, #3498db);
-            color: white;
-            padding: 30px;
-            text-align: center;
-            border-radius: 10px 10px 0 0;
+        .glass-input:focus {
+            outline: none;
+            border-color: #000;
+            box-shadow: 0 0 0 1px #000;
         }
 
-        .form-section {
-            padding: 30px;
-        }
-
-        .form-row {
-            display: flex;
-            gap: 20px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-
-        .form-group {
-            flex: 1;
-            min-width: 200px;
-        }
-
-        .form-group label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 5px;
-            color: #2c3e50;
-        }
-
-        .form-group select,
-        .form-group input {
-            width: 100%;
-            padding: 10px;
-            border: 2px solid #e1e8ed;
-            border-radius: 5px;
-            font-size: 1em;
-        }
-
-        .btn-analyze {
-            background: #3498db;
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            font-size: 1em;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .btn-analyze:hover {
-            background: #2980b9;
-        }
-
-        .results-section {
-            padding: 30px;
-            border-top: 1px solid #eee;
-        }
-
-        .chart-container {
-            background: white;
-            border-radius: 5px;
-            padding: 20px;
-            margin-bottom: 20px;
-            border: 1px solid #eee;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: #666;
-        }
-
-        .error {
-            background: #e74c3c;
-            color: white;
-            padding: 15px;
-            border-radius: 5px;
-            margin: 10px 0;
-        }
-
-        .stats-summary {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            display: none;
-        }
-
-        .stat-item {
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .stat-label {
-            font-weight: 600;
-            color: #2c3e50;
-        }
-
-        .stat-value {
-            color: #3498db;
-            font-weight: 600;
-        }
-
-        /* boutton slider 3 state */
-        .slider {
-            width: 200px;
-            height: 40px;
-            background: #e5e5e7;
-            border-radius: 20px;
+        .tab-minimal {
             position: relative;
-            cursor: pointer;
-            margin: 10px 0;
-            touch-action: manipulation;
-            -webkit-tap-highlight-color: transparent;
+            padding-bottom: 0.5rem;
+            color: #999;
+            transition: color 0.2s;
         }
 
-        .thumb {
-            width: 60px;
-            height: 32px;
-            background: #007AFF;
-            border-radius: 16px;
+        .tab-minimal.active {
+            color: #000;
+        }
+
+        .tab-minimal.active::after {
+            content: '';
             position: absolute;
-            top: 4px;
-            left: 4px;
-            transition: left 0.3s;
-        }
-
-        .labels {
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            height: 100%;
-            font: bold 11px Arial;
-            color: #666;
-            pointer-events: none;
-        }
-
-        .state-0 .thumb {
-            left: 4px;
-        }
-
-        .state-1 .thumb {
-            left: 70px;
-        }
-
-        .state-2 .thumb {
-            left: 136px;
-        }
-
-        .status {
-            color: #666;
-            font-size: 12px;
-            margin-top: 5px;
-        }
-
-        .btn-methods {
-            background: #95a5a6;
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            font-size: 1em;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .btn-methods:hover {
-            background: #7f8c8d;
-        }
-
-        .form-group:nth-last-child(-n+2) {
-            /* 2 derniers form-group (boutons) */
-            align-self: flex-end;
-            /* ou margin-top: auto; */
-        }
-
-        .form-group:nth-child(4) {
-            /* le form-group du slider */
-            margin-left: 30px;
-            /* ou 40px */
-        }
-
-
-        /* Styles mobiles */
-        @media (max-width: 768px) {
-            body {
-                padding: 10px;
-                font-size: 14px;
-            }
-
-            .header {
-                padding: 20px 15px;
-            }
-
-            .header h1 {
-                font-size: 1.5em;
-                margin-bottom: 5px;
-            }
-
-            .header p {
-                font-size: 0.9em;
-                opacity: 0.9;
-            }
-
-            .form-section {
-                padding: 20px 15px;
-            }
-
-            .form-row {
-                flex-direction: column;
-                gap: 15px;
-            }
-
-            .form-group {
-                min-width: auto;
-            }
-
-            .form-group label {
-                font-size: 0.9em;
-            }
-
-            .form-group select,
-            .form-group input {
-                padding: 12px;
-            }
-
-            .btn-analyze {
-                padding: 15px 30px;
-                width: 100%;
-                margin-top: 10px;
-            }
-
-            .results-section {
-                padding: 15px;
-            }
-
-            .chart-container {
-                padding: 10px;
-                margin-bottom: 15px;
-            }
-
-            .stats-summary {
-                display: block;
-                padding: 15px;
-                margin-bottom: 15px;
-                font-size: 0.9em;
-            }
-
-            .stat-item {
-                margin-bottom: 8px;
-            }
-
-            .error {
-                font-size: 0.9em;
-            }
-
-            /*boutton mais pour telephone */
-            .slider {
-                width: 180px;
-                height: 36px;
-            }
-
-            .thumb {
-                width: 52px;
-                height: 28px;
-            }
-
-            .state-0 .thumb {
-                left: 4px;
-            }
-
-            .state-1 .thumb {
-                left: 64px;
-            }
-
-            .state-2 .thumb {
-                left: 124px;
-            }
-
-            /* Masquer le second graphique sur mobile */
-            #chartContainerVilles {
-                display: none !important;
-            }
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #000;
         }
     </style>
-    <!-- Google stuff -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1596518521599869"
-        crossorigin="anonymous"></script>
-    <!-- GOOGL referencement -->
-    <script type="application/ld+json">
-        {
-        "@context": "https://schema.org",
-        "@type": "SoftwareApplication",
-        "name": "Simulateur Rangs Limites EDN 2025",
-        "description": "Outil d'analyse des rangs limites d'internat de médecine avec données CESP",
-        "url": "https://medecinevibe.fr",
-        "applicationCategory": "EducationalApplication"
-        }
-        </script>
-
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZRYCK43R7F"></script>
-    <!-- Canonical URL -->
-    <link rel="canonical" href="https://medecinevibe.fr">
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
-        gtag('js', new Date());
-
-        gtag('config', 'G-ZRYCK43R7F');
-    </script>
 </head>
 
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>🏥 Rangs Limites EDN 2025 - Simulateur Internat Médecine </h1>
-            <p>Visualisez votre position par rapport aux années précédentes, données extraites des listes legifrance
-                <br><small>🔄 <a href="https://medecinevibe.fr" style="color: #007bff; text-decoration: none;">Nouvelle
-                        adresse : medecinevibe.fr</a></small>
-            </p>
-        </div>
-
-        <div class="form-section">
-            <form id="analysisForm">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="specialite">Spécialité</label>
-                        <select id="specialite" required>
-                            <option value="">Sélectionnez une spécialité</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="ville">Ville (optionnel)</label>
-                        <select id="ville">
-                            <option value="">Toutes les villes</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="userRank">Votre rang / 8958</label>
-                        <input type="number" id="userRank" placeholder="Ex: 1500" min="1" max="8958" required />
-                    </div>
-                    <div class="form-group">
-                        <label>Mode d'analyse</label>
-                        <div class="slider state-0" ontouchstart="nextSlider()" onclick="nextSlider()">
-                            <div class="thumb"></div>
-                            <div class="labels">
-                                <span>Brute</span>
-                                <span style="text-decoration: line-through;">CESP</span>
-                                <span>Ajusté</span>
-                            </div>
-                        </div>
-                        <div class="status" id="sliderStatus">Mode: Brute</div>
-                    </div>
-                    <div class="form-group">
-                        <button type="submit" class="btn-analyze">Analyser</button>
-                    </div>
-                    <div class="form-group">
-                        <button type="button" class="btn-methods"
-                            onclick="window.open('methods.html', '_blank')">Méthodes</button>
-                    </div>
+<body class="bg-gray-50">
+    <!-- Animation d'intro -->
+    <div class="intro-overlay">
+        <div class="flow-container">
+            <div class="flow-item" style="animation-delay: 0s;">
+                <div class="text-center">
+                    <div class="text-sm uppercase tracking-wider text-gray-500 mb-2">Source</div>
+                    <div class="font-semibold">📄 Légifrance</div>
+                    <div class="text-xs text-gray-400 mt-1">Données brutes</div>
                 </div>
-            </form>
-        </div>
-
-        <div id="results" class="results-section hidden">
-            <div id="loading" class="loading hidden">Chargement...</div>
-            <div id="error" class="error hidden"></div>
-            <div id="statsSummary" class="stats-summary hidden"></div>
-            <div id="chartContainer" class="chart-container hidden">
-                <div id="plot" style="width:100%; height:500px;"></div>
             </div>
-            <div id="chartContainerVilles" class="chart-container hidden">
-                <div id="plotVilles" style="width:100%; height:650px;"></div>
+
+            <div class="flow-arrow">→</div>
+
+            <div class="flow-item" style="animation-delay: 0.8s;">
+                <div class="text-center">
+                    <div class="text-sm uppercase tracking-wider text-gray-500 mb-2">Traitement</div>
+                    <div class="font-semibold">⚙️ Analyse</div>
+                    <div class="text-xs text-gray-400 mt-1">Catégorisation</div>
+                </div>
+            </div>
+
+            <div class="flow-arrow">→</div>
+
+            <div class="flow-item" style="animation-delay: 1.6s;">
+                <div class="text-center">
+                    <div class="text-sm uppercase tracking-wider text-gray-500 mb-2">Résultat</div>
+                    <div class="font-semibold">📊 Statistiques</div>
+                    <div class="text-xs text-gray-400 mt-1">Visualisation</div>
+                </div>
             </div>
         </div>
     </div>
 
-    <script>
-        // Slider 3 états
-        let sliderState = 0;
-        const sliderLabels = ['Brute', 'Sans CESP', 'Ajuste'];
+    <!-- Contenu principal -->
+    <div class="main-content min-h-screen">
+        <div class="max-w-6xl mx-auto px-6 py-12">
+            <!-- Header minimaliste -->
+            <header class="mb-16 text-center">
+                <div class="inline-flex items-center gap-3 mb-4">
+                    <svg class="w-10 h-10 opacity-80" viewBox="0 0 120 120" fill="none">
+                        <path d="M60 10 L95 30 L95 70 L60 90 L25 70 L25 30 Z" stroke="black" stroke-width="2"
+                            fill="none" />
+                        <rect x="35" y="65" width="12" height="12" fill="black" opacity="0.6" rx="1" />
+                        <text x="41" y="74" font-size="8" fill="white" text-anchor="middle">2</text>
+                        <rect x="54" y="52" width="12" height="25" fill="black" opacity="0.8" rx="1" />
+                        <line x1="60" y1="58" x2="60" y2="72" stroke="white" stroke-width="1" />
+                        <rect x="73" y="68" width="12" height="9" fill="black" opacity="0.5" rx="1" />
+                        <text x="79" y="75" font-size="8" fill="white" text-anchor="middle">3</text>
+                    </svg>
+                    <div class="text-left">
+                        <h1 class="text-2xl font-light tracking-tight">Rangs Limites EDN</h1>
+                        <p class="text-sm text-gray-500">2025</p>
+                    </div>
+                </div>
+                <p class="text-gray-600 max-w-md mx-auto">
+                    Visualisez les rangs d'internat par spécialité et ville
+                </p>
+            </header>
 
-        function nextSlider() {
-            sliderState = (sliderState + 1) % 3;
-            document.querySelector('.slider').className = `slider state-${sliderState}`;
-            document.getElementById('sliderStatus').textContent = `Mode: ${sliderLabels[sliderState]}`;
-            /* No need for this shit
-            fetch('http://localhost:8080/state', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ state: sliderLabels[sliderState].toLowerCase() })
-            }).catch(() => { }); // Ignore erreurs réseau 
-            */
-        }
+            <!-- Formulaire -->
+            <div class="bg-white border border-gray-200 rounded-2xl p-8 mb-12 shadow-sm">
+                <form id="analysisForm" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div>
+                            <label class="block text-xs uppercase tracking-wider text-gray-500 mb-2 font-medium">
+                                Spécialité
+                            </label>
+                            <select id="specialite" required class="glass-input w-full px-4 py-3 rounded-lg">
+                                <option value="">Sélectionner</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs uppercase tracking-wider text-gray-500 mb-2 font-medium">
+                                Ville
+                            </label>
+                            <select id="ville" class="glass-input w-full px-4 py-3 rounded-lg">
+                                <option value="">Toutes</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs uppercase tracking-wider text-gray-500 mb-2 font-medium">
+                                Votre rang
+                            </label>
+                            <input type="number" id="userRank" placeholder="1500" min="1" max="15000" required
+                                class="glass-input w-full px-4 py-3 rounded-lg" />
+                        </div>
+
+                        <div>
+                            <label class="block text-xs uppercase tracking-wider text-gray-500 mb-2 font-medium">
+                                Total élèves 2025
+                            </label>
+                            <input type="number" id="totalCandidates2025" placeholder="8958" min="1000" max="15000"
+                                class="glass-input w-full px-4 py-3 rounded-lg" />
+                        </div>
+                    </div>
+
+                    <div
+                        class="flex flex-col md:flex-row items-start md:items-center justify-between pt-4 border-t gap-4">
+                        <div class="flex flex-col md:flex-row items-start md:items-center gap-4 w-full md:w-auto">
+                            <span class="text-xs uppercase tracking-wider text-gray-500 font-medium">Mode</span>
+                            <div class="flex gap-2">
+                                <button type="button" data-mode="0"
+                                    class="mode-btn px-4 py-2 text-sm rounded-lg border border-gray-200 hover:border-black transition">
+                                    Brute
+                                </button>
+                                <button type="button" data-mode="1"
+                                    class="mode-btn px-4 py-2 text-sm rounded-lg border border-gray-200 hover:border-black transition">
+                                    Sans CESP
+                                </button>
+                                <button type="button" data-mode="2"
+                                    class="mode-btn px-4 py-2 text-sm rounded-lg border border-gray-200 hover:border-black transition">
+                                    Ajusté
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-4 w-full md:w-auto">
+                            <button type="submit"
+                                class="flex-1 md:flex-none bg-black hover:bg-gray-800 text-white px-8 py-3 rounded-lg font-medium transition">
+                                Analyser
+                            </button>
+                            <button type="button" onclick="window.open('methods.html', '_blank')"
+                                class="text-sm text-gray-600 hover:text-black transition underline">
+                                Méthodologie
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Loading -->
+            <div id="loading" class="hidden text-center py-12">
+                <div class="inline-block h-8 w-8 border-2 border-gray-300 border-t-black rounded-full animate-spin">
+                </div>
+            </div>
+
+            <!-- Error -->
+            <div id="error" class="hidden bg-red-50 border border-red-200 text-red-800 px-6 py-4 rounded-lg mb-6">
+            </div>
+
+            <!-- Résultats -->
+            <div id="results" class="hidden">
+                <!-- Stats Summary (mobile uniquement) -->
+                <div id="statsSummary" class="bg-gray-50 border border-gray-200 rounded-xl p-6 mb-6 md:hidden">
+                    <div class="grid grid-cols-2 gap-4 text-center">
+                    </div>
+                </div>
+
+                <!-- Onglets -->
+                <div class="flex gap-8 mb-8 border-b">
+                    <button id="tabEvolution" class="tab-minimal active text-sm font-medium">
+                        Évolution temporelle
+                    </button>
+                    <button id="tabVilles" class="tab-minimal text-sm font-medium hidden md:block">
+                        Par ville
+                    </button>
+                </div>
+
+                <!-- Graphiques -->
+                <div id="chartContainer" class="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm">
+                    <div id="chart" style="height: 600px;"></div>
+                    <div id="chartVilles" class="hidden" style="height: 600px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="text-center text-xs text-gray-500 py-8 border-t mt-16">
+            <p class="mb-2">Données issues de Légifrance • Anonymisées et catégorisées</p>
+            <div class="space-x-4 mt-4">
+                <a href="privacy.html" class="hover:text-black transition">Confidentialité</a>
+                <a href="about.html" class="hover:text-black transition">À propos</a>
+                <a href="legal.html" class="hover:text-black transition">Mentions légales</a>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Animation intro
+        setTimeout(() => {
+            document.querySelectorAll('.flow-item').forEach(item => {
+                item.classList.add('show');
+            });
+        }, 100);
+
         let specialitesData = [], villesData = [];
+        let currentMode = 'brute';
+        const modes = ['brute', 'sans cesp', 'ajuste'];
         let isMobile = window.innerWidth <= 768;
 
-        // Détection du redimensionnement
         window.addEventListener('resize', () => {
             isMobile = window.innerWidth <= 768;
         });
+
+        // Mode buttons
+        document.querySelectorAll('.mode-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.mode-btn').forEach(b => {
+                    b.classList.remove('bg-black', 'text-white', 'border-black');
+                    b.classList.add('border-gray-200');
+                });
+                btn.classList.remove('border-gray-200');
+                btn.classList.add('bg-black', 'text-white', 'border-black');
+                currentMode = modes[parseInt(btn.dataset.mode)];
+            });
+        });
+
+        document.querySelector('.mode-btn[data-mode="0"]').classList.add('bg-black', 'text-white', 'border-black');
 
         async function loadInitialData() {
             try {
@@ -447,19 +344,8 @@
                 const specialiteSelect = document.getElementById('specialite');
                 const villeSelect = document.getElementById('ville');
 
-                specialitesData.forEach(s => {
-                    const option = document.createElement('option');
-                    option.value = s;
-                    option.textContent = s;
-                    specialiteSelect.appendChild(option);
-                });
-
-                villesData.forEach(v => {
-                    const option = document.createElement('option');
-                    option.value = v;
-                    option.textContent = v;
-                    villeSelect.appendChild(option);
-                });
+                specialitesData.forEach(s => specialiteSelect.appendChild(new Option(s, s)));
+                villesData.forEach(v => villeSelect.appendChild(new Option(v, v)));
             } catch (error) {
                 console.error('Erreur:', error);
             }
@@ -490,25 +376,15 @@
                 for (const year of years) {
                     let endpoint = `/api/stats/${encodeURIComponent(specialite)}?annee=${year}`;
                     if (ville) endpoint += `&ville=${encodeURIComponent(ville)}`;
-                    endpoint += `&mode=${encodeURIComponent(sliderLabels[sliderState].toLowerCase())}`;
+                    endpoint += `&mode=${encodeURIComponent(currentMode)}`;
+
                     const response = await fetch(endpoint);
                     if (response.ok) {
                         const data = await response.json();
-                        const total = totalCandidates[year];
-                        const transform = (rang) => rang / total;
-
                         allData.push({
                             year,
-                            q1: transform(data.rang_q1),
-                            median: transform(data.rang_median),
-                            q3: transform(data.rang_q3),
-                            min: transform(data.rang_min || 1),
-                            max: transform(data.rang_max || total),
-                            minOrig: data.rang_min || 1,
-                            maxOrig: data.rang_max || total,
-                            medianOrig: data.rang_median,
                             rang_min: data.rang_min || 1,
-                            rang_max: data.rang_max || total,
+                            rang_max: data.rang_max || totalCandidates[year],
                             rang_median: data.rang_median
                         });
                     }
@@ -516,16 +392,19 @@
 
                 if (allData.length === 0) throw new Error('Aucune donnée trouvée');
 
-                const userTransformed = userRank / 8899;
+                const total2025Input = document.getElementById('totalCandidates2025').value;
+                const currentTotal = total2025Input ? parseInt(total2025Input) : 8958;
+
+                showStatsSummary(allData, userRank, currentTotal);
+                document.getElementById('results').classList.remove('hidden');
+
+                await new Promise(resolve => setTimeout(resolve, 500));
 
                 if (isMobile) {
-                    // Version mobile simplifiée
-                    createMobilePlot(allData, userRank, specialite + (ville ? ` - ${ville}` : ''));
-                    showStatsSummary(allData, userRank);
+                    createMobilePlot(allData, userRank, specialite + (ville ? ` - ${ville}` : ''), currentTotal);
                 } else {
-                    // Version desktop complète
-                    createBoxPlot(allData, userTransformed, userRank, specialite + (ville ? ` - ${ville}` : ''));
-                    await createBarPlot(specialite, ville, years, userRank, userTransformed);
+                    createEChart(allData, userRank, specialite + (ville ? ` - ${ville}` : ''), currentTotal);
+                    await createBarPlot(specialite, ville, userRank, currentTotal);
                 }
 
             } catch (error) {
@@ -535,11 +414,10 @@
             }
         }
 
-        function createMobilePlot(allData, userRank, title) {
+        // VERSION MOBILE avec Plotly
+        function createMobilePlot(allData, userRank, title, currentTotal) {
             const totalCandidates = { 2019: 8308, 2020: 8424, 2021: 8579, 2022: 8854, 2023: 9312, 2024: 7817 };
-            const currentTotal = 8958;
 
-            // Normaliser les rangs par rapport au total actuel (8958)
             const normalizedData = allData.map(d => ({
                 year: d.year,
                 rang_min_normalized: Math.round((d.rang_min / totalCandidates[d.year]) * currentTotal),
@@ -549,14 +427,13 @@
                 total_year: totalCandidates[d.year]
             }));
 
-            // Trace pour les rangs minimum normalisés
             const minTrace = {
                 x: normalizedData.map(d => d.year),
                 y: normalizedData.map(d => d.rang_min_normalized),
                 type: 'scatter',
                 mode: 'lines+markers',
-                name: 'Rang Min (normalisé)',
-                line: { color: '#27ae60', width: 3 },
+                name: 'Rang Min',
+                line: { color: '#000', width: 3 },
                 marker: { size: 8 },
                 hovertemplate: '%{x}: Rang %{y}<br>Original: %{customdata.original}/%{customdata.total}<extra></extra>',
                 customdata: normalizedData.map(d => ({
@@ -565,14 +442,13 @@
                 }))
             };
 
-            // Trace pour les rangs maximum normalisés
             const maxTrace = {
                 x: normalizedData.map(d => d.year),
                 y: normalizedData.map(d => d.rang_max_normalized),
                 type: 'scatter',
                 mode: 'lines+markers',
-                name: 'Rang Max (normalisé)',
-                line: { color: '#e74c3c', width: 3 },
+                name: 'Rang Max',
+                line: { color: '#666', width: 3 },
                 marker: { size: 8 },
                 hovertemplate: '%{x}: Rang %{y}<br>Original: %{customdata.original}/%{customdata.total}<extra></extra>',
                 customdata: normalizedData.map(d => ({
@@ -581,14 +457,13 @@
                 }))
             };
 
-            // Zone entre min et max normalisés
             const fillTrace = {
                 x: [...normalizedData.map(d => d.year), ...normalizedData.map(d => d.year).reverse()],
                 y: [...normalizedData.map(d => d.rang_min_normalized), ...normalizedData.map(d => d.rang_max_normalized).reverse()],
                 type: 'scatter',
                 mode: 'lines',
                 fill: 'toself',
-                fillcolor: 'rgba(52, 152, 219, 0.1)',
+                fillcolor: 'rgba(0, 0, 0, 0.05)',
                 line: { color: 'transparent' },
                 name: 'Zone accessible',
                 showlegend: false,
@@ -597,31 +472,30 @@
 
             const traces = [fillTrace, minTrace, maxTrace];
 
-            // Ligne pour le rang de l'utilisateur
             if (userRank > 0) {
-                const userTrace = {
+                traces.push({
                     x: normalizedData.map(d => d.year),
                     y: Array(normalizedData.length).fill(userRank),
                     type: 'scatter',
                     mode: 'lines',
                     name: `Votre rang: ${userRank}`,
-                    line: { color: '#f39c12', width: 3, dash: 'dash' },
+                    line: { color: '#000', width: 3, dash: 'dash' },
                     marker: { size: 6 },
                     hovertemplate: 'Votre rang: %{y}<extra></extra>'
-                };
-                traces.push(userTrace);
+                });
             }
 
             const layout = {
                 title: {
-                    text: title + ' (rangs normalisés /8958)',
-                    font: { size: 14 }
+                    text: title + ` (normalisé /${currentTotal})`,
+                    font: { size: 14, color: '#000' }
                 },
                 yaxis: {
-                    title: 'Rang normalisé /8958',
+                    title: `Rang /${currentTotal}`,
                     autorange: 'reversed',
                     showgrid: true,
-                    zeroline: false
+                    zeroline: false,
+                    gridcolor: '#f5f5f5'
                 },
                 xaxis: {
                     title: 'Année',
@@ -636,245 +510,323 @@
                     font: { size: 10 }
                 },
                 hovermode: 'closest',
-                height: 400
+                height: 400,
+                plot_bgcolor: 'white',
+                paper_bgcolor: 'white'
             };
 
-            Plotly.newPlot('plot', traces, layout, {
+            Plotly.newPlot('chart', traces, layout, {
                 responsive: true,
                 displayModeBar: false
             });
-            document.getElementById('chartContainer').classList.remove('hidden');
         }
 
-        function createBoxPlot(allData, userTransformed, userRank, title) {
-            // Transformer les données pour Plotly
-            const traces = allData.map(yearData => ({
-                type: 'box',
-                name: yearData.year.toString(),
-                x: [yearData.year],
-                q1: [yearData.q1],
-                median: [yearData.median],
-                q3: [yearData.q3],
-                lowerfence: [yearData.min],
-                upperfence: [yearData.max],
-                boxpoints: false,
-                fillcolor: 'rgba(173, 216, 230, 0.5)',
-                line: { color: 'rgb(8, 81, 156)' }
-            }));
+        // VERSION DESKTOP avec ECharts
+        function createEChart(allData, userRank, title, currentTotal) {
+            const chartDom = document.getElementById('chart');
+            const container = document.getElementById('chartContainer');
+            const totalCandidates = { 2019: 8308, 2020: 8424, 2021: 8579, 2022: 8854, 2023: 9312, 2024: 7817 };
 
-            const layout = {
-                title: `Distribution par année - ${title}`,
-                yaxis: {
-                    title: 'Position (rang normalisé)',
-                    range: [1.1, 0],
-                    showgrid: true,
-                    zeroline: false
+            const existingChart = echarts.getInstanceByDom(chartDom);
+            if (existingChart) existingChart.dispose();
+
+            const width = container.clientWidth;
+            const myChart = echarts.init(chartDom, null, { width: width, height: 600 });
+
+            const years = allData.map(d => d.year);
+            const minData = allData.map(d => Math.round((d.rang_min / totalCandidates[d.year]) * currentTotal));
+            const maxData = allData.map(d => Math.round((d.rang_max / totalCandidates[d.year]) * currentTotal));
+
+            const option = {
+                title: {
+                    text: title,
+                    left: 'center',
+                    top: 20,
+                    textStyle: { fontSize: 18, fontWeight: '500', color: '#000' }
                 },
-                xaxis: { title: 'Année' },
-                margin: { l: 60, r: 30, b: 80, t: 100 },
-                showlegend: false,
-                shapes: userRank > 0 ? [{
-                    type: 'line',
-                    x0: allData[0].year - 0.5,
-                    x1: allData[allData.length - 1].year + 0.5,
-                    y0: userTransformed,
-                    y1: userTransformed,
-                    line: { color: '#e74c3c', width: 3, dash: 'dash' }
-                }] : [],
-                annotations: userRank > 0 ? [{
-                    x: allData[Math.floor(allData.length / 2)].year,
-                    y: userTransformed,
-                    text: `Votre rang: ${userRank}`,
-                    showarrow: true,
-                    arrowhead: 2,
-                    bgcolor: '#e74c3c',
-                    font: { color: 'white' }
-                }] : []
+                tooltip: {
+                    trigger: 'axis',
+                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                    borderColor: '#e5e5e5',
+                    borderWidth: 1,
+                    textStyle: { color: '#000', fontSize: 13 }
+                },
+                legend: {
+                    data: ['Rang Min', 'Rang Max', userRank ? 'Votre rang' : null].filter(Boolean),
+                    bottom: 20,
+                    textStyle: { color: '#666', fontSize: 13 }
+                },
+                grid: { left: '5%', right: '5%', top: 80, bottom: 80, containLabel: true },
+                xAxis: {
+                    type: 'category',
+                    data: years,
+                    axisLine: { lineStyle: { color: '#e5e5e5' } },
+                    axisLabel: { color: '#666', fontSize: 13 }
+                },
+                yAxis: {
+                    type: 'value',
+                    name: 'Rang',
+                    inverse: true,
+                    axisLine: { show: false },
+                    axisLabel: { color: '#666', fontSize: 13 },
+                    splitLine: { lineStyle: { color: '#f5f5f5' } }
+                },
+                series: [
+                    {
+                        name: 'Rang Min',
+                        type: 'line',
+                        data: minData,
+                        smooth: true,
+                        symbolSize: 8,
+                        lineStyle: { color: '#000', width: 3 },
+                        itemStyle: { color: '#000', borderWidth: 2, borderColor: '#fff' },
+                        areaStyle: { color: 'rgba(0, 0, 0, 0.08)' }
+                    },
+                    {
+                        name: 'Rang Max',
+                        type: 'line',
+                        data: maxData,
+                        smooth: true,
+                        symbolSize: 8,
+                        lineStyle: { color: '#666', width: 3 },
+                        itemStyle: { color: '#666', borderWidth: 2, borderColor: '#fff' },
+                        areaStyle: { color: 'rgba(0, 0, 0, 0.04)' }
+                    },
+                    userRank > 0 ? {
+                        name: 'Votre rang',
+                        type: 'line',
+                        data: Array(years.length).fill(userRank),
+                        symbolSize: 6,
+                        lineStyle: { color: '#000', width: 2, type: [5, 5] },
+                        itemStyle: { color: '#000' }
+                    } : null
+                ].filter(Boolean)
             };
 
-            Plotly.newPlot('plot', traces, layout, { responsive: true, autosize: true });
-            document.getElementById('chartContainer').classList.remove('hidden');
+            myChart.setOption(option);
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => myChart.resize());
+            });
+            setTimeout(() => myChart.resize(), 500);
+            window.addEventListener('resize', () => myChart.resize());
         }
 
-        async function createBarPlot(specialite, selectedVille, years, userRank, userTransformed) {
+        async function createBarPlot(specialite, selectedVille, userRank, currentTotal) {
             try {
-                const totalCandidates = {
-                    2019: 8308, 2020: 8424, 2021: 8579,
-                    2022: 8854, 2023: 9312, 2024: 7817
-                };
-
+                const years = [2019, 2020, 2021, 2022, 2023, 2024];
+                const totalCandidates = { 2019: 8308, 2020: 8424, 2021: 8579, 2022: 8854, 2023: 9312, 2024: 7817 };
                 const villesToAnalyze = selectedVille ? [selectedVille] : villesData;
-                const dataItems = [];
 
+                const allRequests = [];
                 for (const ville of villesToAnalyze) {
                     for (const year of years) {
-                        try {
-                            const response = await fetch(`/api/stats/${encodeURIComponent(specialite)}?annee=${year}&ville=${encodeURIComponent(ville)}&mode=${encodeURIComponent(sliderLabels[sliderState].toLowerCase())}`);
-                            if (response.ok) {
-                                const data = await response.json();
-                                const total = totalCandidates[year];
-                                const transform = (rang) => (rang - 1) / (total - 1);
-
-                                dataItems.push({
-                                    label: `${ville} ${year}`,
-                                    ville,
-                                    year,
-                                    min: transform(data.rang_min || 1),
-                                    max: transform(data.rang_max || total),
-                                    minOrig: data.rang_min || 1,
-                                    maxOrig: data.rang_max || total
-                                });
-                            }
-                        } catch (e) {
-                            console.warn(`Erreur pour ${ville}-${year}:`, e);
-                        }
+                        allRequests.push({ ville, year });
                     }
                 }
 
-                if (dataItems.length === 0) {
-                    document.getElementById('chartContainerVilles').classList.add('hidden');
-                    return;
+                const batchSize = 10;
+                const dataItems = [];
+
+                for (let i = 0; i < allRequests.length; i += batchSize) {
+                    const batch = allRequests.slice(i, i + batchSize);
+                    const promises = batch.map(({ ville, year }) =>
+                        fetch(`/api/stats/${encodeURIComponent(specialite)}?annee=${year}&ville=${encodeURIComponent(ville)}&mode=${encodeURIComponent(currentMode)}`)
+                            .then(res => res.ok ? res.json() : null)
+                            .then(data => data ? {
+                                label: `${ville} ${year}`,
+                                ville,
+                                year,
+                                min: Math.round(((data.rang_min || 1) / totalCandidates[year]) * currentTotal),
+                                max: Math.round(((data.rang_max || totalCandidates[year]) / totalCandidates[year]) * currentTotal)
+                            } : null)
+                            .catch(() => null)
+                    );
+
+                    const results = await Promise.all(promises);
+                    dataItems.push(...results.filter(item => item !== null));
                 }
+
+                if (dataItems.length === 0) return;
 
                 dataItems.sort((a, b) => ((a.min + a.max) / 2) - ((b.min + b.max) / 2));
 
-                const xLabels = dataItems.map(d => d.label);
-                const baseVals = dataItems.map(d => d.min);
-                const heights = dataItems.map(d => d.max - d.min);
-                const hoverText = dataItems.map(d =>
-                    `${d.ville} ${d.year}<br>Rang ${d.minOrig} → ${d.maxOrig}`
-                );
+                const chartDom = document.getElementById('chartVilles');
+                const container = document.getElementById('chartContainer');
 
-                const trace = {
-                    x: xLabels,
-                    y: heights,
-                    base: baseVals,
-                    type: 'bar',
-                    text: hoverText,
-                    hoverinfo: 'text',
-                    marker: {
-                        color: 'rgba(55,128,191,0.6)',
-                        line: {
-                            color: 'rgba(55,128,191,1.0)',
-                            width: 1
-                        }
-                    }
-                };
+                const existingChart = echarts.getInstanceByDom(chartDom);
+                if (existingChart) existingChart.dispose();
 
-                const layout = {
-                    title: `Plage de rangs par ville - ${specialite}`,
-                    barmode: 'overlay',
-                    xaxis: { title: 'Ville / Année' },
-                    yaxis: {
-                        title: 'Rang normalisé (0 = 1er, 1 = dernier)',
-                        range: [1, 0]
+                const width = container.clientWidth;
+                const myChart = echarts.init(chartDom, null, { width: width, height: 600 });
+
+                const option = {
+                    title: {
+                        text: `Comparaison par ville - ${specialite}`,
+                        left: 'center',
+                        top: 20,
+                        textStyle: { fontSize: 18, fontWeight: '500', color: '#000' }
                     },
-                    height: 650,
-                    shapes: userRank > 0 ? [{
-                        type: 'line',
-                        x0: 0,
-                        x1: 1,
-                        xref: 'paper',
-                        y0: userTransformed,
-                        y1: userTransformed,
-                        line: {
-                            color: '#e74c3c',
-                            width: 2,
-                            dash: 'dash'
+                    tooltip: {
+                        trigger: 'axis',
+                        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                        borderColor: '#e5e5e5',
+                        formatter: function (params) {
+                            const item = dataItems[params[0].dataIndex];
+                            return `${item.ville} ${item.year}<br/>Rang ${item.min} → ${item.max}`;
                         }
-                    }] : [],
+                    },
+                    grid: { left: '3%', right: '4%', top: 80, bottom: '15%', containLabel: true },
+                    xAxis: {
+                        type: 'category',
+                        data: dataItems.map(d => d.label),
+                        axisLabel: { rotate: 45, color: '#666', fontSize: 11 },
+                        axisLine: { lineStyle: { color: '#e5e5e5' } }
+                    },
+                    yAxis: {
+                        type: 'value',
+                        name: 'Rang',
+                        inverse: true,
+                        axisLine: { show: false },
+                        axisLabel: { color: '#666', fontSize: 13 },
+                        splitLine: { lineStyle: { color: '#f5f5f5' } }
+                    },
+                    series: [
+                        {
+                            type: 'bar',
+                            data: dataItems.map(d => [d.min, d.max]),
+                            itemStyle: {
+                                color: function (params) {
+                                    const item = dataItems[params.dataIndex];
+                                    if (userRank > 0 && userRank >= item.min && userRank <= item.max) {
+                                        return '#000';
+                                    }
+                                    return '#999';
+                                }
+                            },
+                            barWidth: '60%',
+                            encode: { x: 0, y: [0, 1] }
+                        }
+                    ]
                 };
 
-                Plotly.newPlot('plotVilles', [trace], layout, { responsive: true, autosize: true });
-                document.getElementById('chartContainerVilles').classList.remove('hidden');
+                if (userRank > 0) {
+                    option.series.push({
+                        type: 'line',
+                        data: Array(dataItems.length).fill(userRank),
+                        lineStyle: { color: '#000', width: 2, type: [5, 5] },
+                        symbolSize: 0,
+                        z: 10
+                    });
+                }
+
+                myChart.setOption(option);
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => myChart.resize());
+                });
+                setTimeout(() => myChart.resize(), 500);
+                window.addEventListener('resize', () => myChart.resize());
             } catch (err) {
-                console.error('Erreur dans createBarPlot:', err);
+                console.error('Erreur:', err);
             }
         }
 
-        function showStatsSummary(allData, userRank) {
-            const summary = document.getElementById('statsSummary');
+        function showStatsSummary(allData, userRank, currentTotal) {
             const totalCandidates = { 2019: 8308, 2020: 8424, 2021: 8579, 2022: 8854, 2023: 9312, 2024: 7817 };
-            const currentTotal = 8958;
 
-            // Normaliser les statistiques
             const normalizedData = allData.map(d => ({
                 rang_min_normalized: Math.round((d.rang_min / totalCandidates[d.year]) * currentTotal),
                 rang_max_normalized: Math.round((d.rang_max / totalCandidates[d.year]) * currentTotal),
-                year: d.year,
-                rang_min_original: d.rang_min,
-                rang_max_original: d.rang_max
+                year: d.year
             }));
 
             const avgMin = Math.round(normalizedData.reduce((sum, d) => sum + d.rang_min_normalized, 0) / normalizedData.length);
             const avgMax = Math.round(normalizedData.reduce((sum, d) => sum + d.rang_max_normalized, 0) / normalizedData.length);
             const latestYear = normalizedData[normalizedData.length - 1];
 
-            let positionText = '';
+            let statusEmoji = '';
+            let statusText = '';
             if (userRank > 0) {
                 if (userRank <= avgMin) {
-                    positionText = '✅ Excellent - Vous êtes dans la zone sûre';
+                    statusEmoji = '✅';
+                    statusText = 'Zone sûre';
                 } else if (userRank <= avgMax) {
-                    positionText = '⚠️ Possible - Vous êtes dans la zone accessible';
+                    statusEmoji = '⚠️';
+                    statusText = 'Zone accessible';
                 } else {
-                    positionText = '❌ Difficile - Votre rang est au-dessus de la fourchette';
+                    statusEmoji = '❌';
+                    statusText = 'Difficile';
                 }
             }
 
-            summary.innerHTML = `
-                <div class="stat-item">
-                    <span class="stat-label">Rang minimum moyen (normalisé):</span>
-                    <span class="stat-value">${avgMin}</span>
+            const summaryEl = document.getElementById('statsSummary');
+            summaryEl.innerHTML = `
+                <div class="grid grid-cols-2 gap-4 text-center">
+                    <div>
+                        <div class="text-xs uppercase tracking-wider text-gray-500 mb-1">Rang min moyen</div>
+                        <div class="text-2xl font-semibold">${avgMin}</div>
+                        <div class="text-xs text-gray-400 mt-1">/${currentTotal}</div>
+                    </div>
+                    <div>
+                        <div class="text-xs uppercase tracking-wider text-gray-500 mb-1">Rang max moyen</div>
+                        <div class="text-2xl font-semibold">${avgMax}</div>
+                        <div class="text-xs text-gray-400 mt-1">/${currentTotal}</div>
+                    </div>
+                    <div>
+                        <div class="text-xs uppercase tracking-wider text-gray-500 mb-1">Dernière année (${latestYear.year})</div>
+                        <div class="text-lg font-semibold">${latestYear.rang_min_normalized} - ${latestYear.rang_max_normalized}</div>
+                        <div class="text-xs text-gray-400 mt-1">/${currentTotal}</div>
+                    </div>
+                    ${userRank > 0 ? `
+                    <div>
+                        <div class="text-xs uppercase tracking-wider text-gray-500 mb-1">Votre position</div>
+                        <div class="text-lg font-semibold">${statusEmoji} ${statusText}</div>
+                    </div>
+                    ` : ''}
                 </div>
-                <div class="stat-item">
-                    <span class="stat-label">Rang maximum moyen (normalisé):</span>
-                    <span class="stat-value">${avgMax}</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-label">Dernière année (${latestYear.year}) normalisé:</span>
-                    <span class="stat-value">${latestYear.rang_min_normalized} - ${latestYear.rang_max_normalized}</span>
-                </div>
-                <div class="stat-item" style="font-size: 0.8em; color: #666;">
-                    <span class="stat-label">Original ${latestYear.year}:</span>
-                    <span class="stat-value">${latestYear.rang_min_original} - ${latestYear.rang_max_original}</span>
-                </div>
-                ${userRank > 0 ? `<div class="stat-item" style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #ddd;"><span style="font-weight: 600;">${positionText}</span></div>` : ''}
             `;
-
-            summary.classList.remove('hidden');
         }
 
         function showLoading(show) {
-            const loading = document.getElementById('loading');
-            const results = document.getElementById('results');
-            show ? results.classList.remove('hidden') && loading.classList.remove('hidden') : loading.classList.add('hidden');
+            document.getElementById('loading').classList.toggle('hidden', !show);
         }
 
         function showError(message) {
-            document.getElementById('error').textContent = message;
-            document.getElementById('error').classList.remove('hidden');
-            document.getElementById('results').classList.remove('hidden');
+            const errorEl = document.getElementById('error');
+            errorEl.textContent = message;
+            errorEl.classList.remove('hidden');
         }
 
         function hideError() {
             document.getElementById('error').classList.add('hidden');
         }
 
+        // Gestion des onglets
+        document.getElementById('tabEvolution').addEventListener('click', () => {
+            document.querySelectorAll('.tab-minimal').forEach(b => b.classList.remove('active'));
+            document.getElementById('tabEvolution').classList.add('active');
+            document.getElementById('chart').classList.remove('hidden');
+            document.getElementById('chartVilles').classList.add('hidden');
+
+            setTimeout(() => {
+                const chart = echarts.getInstanceByDom(document.getElementById('chart'));
+                if (chart) chart.resize();
+            }, 50);
+        });
+
+        document.getElementById('tabVilles').addEventListener('click', () => {
+            document.querySelectorAll('.tab-minimal').forEach(b => b.classList.remove('active'));
+            document.getElementById('tabVilles').classList.add('active');
+            document.getElementById('chart').classList.add('hidden');
+            document.getElementById('chartVilles').classList.remove('hidden');
+
+            setTimeout(() => {
+                const chart = echarts.getInstanceByDom(document.getElementById('chartVilles'));
+                if (chart) chart.resize();
+            }, 50);
+        });
+
         loadInitialData();
     </script>
-    <footer
-        style="font-size: 13px; color: #555; text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #ccc;">
-        <p> Les données affichées ont été anonymisées et catégorisées> par ville et
-            spécialité avant d’être chargées sur le serveur.</p>
-        <p> Ce site respecte le RGPD : aucune donnée personnelle n’est collectée.</p>
-        <p style="font-style: italic;"> Ce site est en cours de développement (WIP). Des erreurs ou approximations
-            peuvent exister.</p>
-        <a href="privacy.html">Confidentialité</a> |
-        <a href="about.html">À propos</a> |
-        <a href="legal.html">Mentions légales</a> |
-        <a href="terms.html">CGU</a>
-    </footer>
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </body>
 
 </html>
