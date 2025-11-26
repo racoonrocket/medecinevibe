@@ -4,7 +4,11 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Simulez vos chances d'internat avec notre outil EDN 2025...">
     <title>Rangs Limites EDN 2025</title>
+
+    <link rel="icon" type="image/png" href="/logo512512.png">
+    <link rel="apple-touch-icon" href="/logo180180.png">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
@@ -120,6 +124,39 @@
             background: #000;
         }
     </style>
+
+
+    <!-- Google stuff -->
+    <!-- GOOGL referencement -->
+    <script type="application/ld+json">
+        {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "Simulateur Rangs Limites EDN 2025",
+        "description": "Outil d'analyse des rangs limites d'internat de médecine avec données CESP",
+        "url": "https://medecinevibe.fr",
+        "applicationCategory": "EducationalApplication"
+        }
+        </script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZRYCK43R7F"></script>
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://medecinevibe.fr">
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-ZRYCK43R7F');
+    </script>
+
+
+
+
+
+
+
 </head>
 
 <body class="bg-gray-50">
@@ -162,16 +199,7 @@
             <!-- Header minimaliste -->
             <header class="mb-16 text-center">
                 <div class="inline-flex items-center gap-3 mb-4">
-                    <svg class="w-10 h-10 opacity-80" viewBox="0 0 120 120" fill="none">
-                        <path d="M60 10 L95 30 L95 70 L60 90 L25 70 L25 30 Z" stroke="black" stroke-width="2"
-                            fill="none" />
-                        <rect x="35" y="65" width="12" height="12" fill="black" opacity="0.6" rx="1" />
-                        <text x="41" y="74" font-size="8" fill="white" text-anchor="middle">2</text>
-                        <rect x="54" y="52" width="12" height="25" fill="black" opacity="0.8" rx="1" />
-                        <line x1="60" y1="58" x2="60" y2="72" stroke="white" stroke-width="1" />
-                        <rect x="73" y="68" width="12" height="9" fill="black" opacity="0.5" rx="1" />
-                        <text x="79" y="75" font-size="8" fill="white" text-anchor="middle">3</text>
-                    </svg>
+                    <img src="/logo512512.png" alt="Logo" class="w-10 h-10 opacity-80">
                     <div class="text-left">
                         <h1 class="text-2xl font-light tracking-tight">Rangs Limites EDN</h1>
                         <p class="text-sm text-gray-500">2025</p>
@@ -179,6 +207,9 @@
                 </div>
                 <p class="text-gray-600 max-w-md mx-auto">
                     Visualisez les rangs d'internat par spécialité et ville
+                    <br>
+                    <small class="text-gray-400">Site en refonte — n'hésitez pas à envoyer vos remarques par mail (voir
+                        À propos)</small>
                 </p>
             </header>
 
@@ -293,7 +324,10 @@
 
         <!-- Footer -->
         <footer class="text-center text-xs text-gray-500 py-8 border-t mt-16">
-            <p class="mb-2">Données issues de Légifrance • Anonymisées et catégorisées</p>
+            <p>Les données affichées ont été anonymisées et catégorisées...</p>
+            <p>Ce site respecte le RGPD : aucune donnée personnelle n'est collectée.</p>
+            <p>Ce site est en cours de développement (WIP)...</p>
+            <a href="terms.html">CGU</a>
             <div class="space-x-4 mt-4">
                 <a href="privacy.html" class="hover:text-black transition">Confidentialité</a>
                 <a href="about.html" class="hover:text-black transition">À propos</a>
@@ -615,40 +649,39 @@
             try {
                 const years = [2019, 2020, 2021, 2022, 2023, 2024];
                 const totalCandidates = { 2019: 8308, 2020: 8424, 2021: 8579, 2022: 8854, 2023: 9312, 2024: 7817 };
-                const villesToAnalyze = selectedVille ? [selectedVille] : villesData;
+                const villesToAnalyze = selectedVille ? [selectedVille] : villesData.slice(0, 15);
 
-                const allRequests = [];
+                const cityData = [];
+
                 for (const ville of villesToAnalyze) {
                     for (const year of years) {
-                        allRequests.push({ ville, year });
+                        try {
+                            const response = await fetch(
+                                `/api/stats/${encodeURIComponent(specialite)}?annee=${year}&ville=${encodeURIComponent(ville)}&mode=${encodeURIComponent(currentMode)}`
+                            );
+
+                            if (response.ok) {
+                                const data = await response.json();
+                                const normalizedMin = Math.round(((data.rang_min || 1) / totalCandidates[year]) * currentTotal);
+                                const normalizedMax = Math.round(((data.rang_max || totalCandidates[year]) / totalCandidates[year]) * currentTotal);
+
+                                cityData.push({
+                                    label: `${ville} ${year}`,
+                                    ville,
+                                    year,
+                                    min: normalizedMin,
+                                    max: normalizedMax
+                                });
+                            }
+                        } catch (e) {
+                            console.warn(`Erreur ${ville}-${year}:`, e);
+                        }
                     }
                 }
 
-                const batchSize = 10;
-                const dataItems = [];
+                if (cityData.length === 0) return;
 
-                for (let i = 0; i < allRequests.length; i += batchSize) {
-                    const batch = allRequests.slice(i, i + batchSize);
-                    const promises = batch.map(({ ville, year }) =>
-                        fetch(`/api/stats/${encodeURIComponent(specialite)}?annee=${year}&ville=${encodeURIComponent(ville)}&mode=${encodeURIComponent(currentMode)}`)
-                            .then(res => res.ok ? res.json() : null)
-                            .then(data => data ? {
-                                label: `${ville} ${year}`,
-                                ville,
-                                year,
-                                min: Math.round(((data.rang_min || 1) / totalCandidates[year]) * currentTotal),
-                                max: Math.round(((data.rang_max || totalCandidates[year]) / totalCandidates[year]) * currentTotal)
-                            } : null)
-                            .catch(() => null)
-                    );
-
-                    const results = await Promise.all(promises);
-                    dataItems.push(...results.filter(item => item !== null));
-                }
-
-                if (dataItems.length === 0) return;
-
-                dataItems.sort((a, b) => ((a.min + a.max) / 2) - ((b.min + b.max) / 2));
+                cityData.sort((a, b) => ((a.min + a.max) / 2) - ((b.min + b.max) / 2));
 
                 const chartDom = document.getElementById('chartVilles');
                 const container = document.getElementById('chartContainer');
@@ -656,55 +689,82 @@
                 const existingChart = echarts.getInstanceByDom(chartDom);
                 if (existingChart) existingChart.dispose();
 
-                const width = container.clientWidth;
-                const myChart = echarts.init(chartDom, null, { width: width, height: 600 });
+                const myChart = echarts.init(chartDom, null, { width: container.clientWidth, height: 600 });
 
                 const option = {
                     title: {
-                        text: `Comparaison par ville - ${specialite}`,
+                        text: `Rangs par ville - ${specialite}`,
+                        subtext: 'Min → Max (toutes années)',
                         left: 'center',
                         top: 20,
-                        textStyle: { fontSize: 18, fontWeight: '500', color: '#000' }
+                        textStyle: { fontSize: 18, fontWeight: '500', color: '#000' },
+                        subtextStyle: { fontSize: 13, color: '#666' }
                     },
                     tooltip: {
                         trigger: 'axis',
                         backgroundColor: 'rgba(255, 255, 255, 0.95)',
                         borderColor: '#e5e5e5',
+                        axisPointer: { type: 'shadow' },
                         formatter: function (params) {
-                            const item = dataItems[params[0].dataIndex];
-                            return `${item.ville} ${item.year}<br/>Rang ${item.min} → ${item.max}`;
+                            const idx = params[0].dataIndex;
+                            const item = cityData[idx];
+                            return `<strong>${item.label}</strong><br/>Min: ${item.min}<br/>Max: ${item.max}`;
                         }
                     },
-                    grid: { left: '3%', right: '4%', top: 80, bottom: '15%', containLabel: true },
-                    xAxis: {
-                        type: 'category',
-                        data: dataItems.map(d => d.label),
-                        axisLabel: { rotate: 45, color: '#666', fontSize: 11 },
-                        axisLine: { lineStyle: { color: '#e5e5e5' } }
+                    grid: {
+                        left: '15%',
+                        right: '5%',
+                        top: 100,
+                        bottom: 80,
+                        containLabel: true
                     },
-                    yAxis: {
+                    xAxis: {
                         type: 'value',
                         name: 'Rang',
                         inverse: true,
+                        min: 0,                    // ✅ Commence à 0
+                        max: currentTotal,         // ✅ Termine au total (8958)
                         axisLine: { show: false },
-                        axisLabel: { color: '#666', fontSize: 13 },
+                        axisLabel: { color: '#666', fontSize: 12 },
                         splitLine: { lineStyle: { color: '#f5f5f5' } }
+                    },
+                    yAxis: {
+                        type: 'category',
+                        data: cityData.map(d => d.label),
+                        axisLine: { lineStyle: { color: '#e5e5e5' } },
+                        axisLabel: { color: '#666', fontSize: 11 }
                     },
                     series: [
                         {
-                            type: 'bar',
-                            data: dataItems.map(d => [d.min, d.max]),
-                            itemStyle: {
-                                color: function (params) {
-                                    const item = dataItems[params.dataIndex];
-                                    if (userRank > 0 && userRank >= item.min && userRank <= item.max) {
-                                        return '#000';
+                            type: 'custom',
+                            renderItem: (params, api) => {
+                                const idx = params.dataIndex;
+                                const item = cityData[idx];
+
+                                // Coordonnées des points min et max
+                                const startCoord = api.coord([item.max, idx]); // max à gauche (inversé)
+                                const endCoord = api.coord([item.min, idx]);   // min à droite (inversé)
+                                const height = api.size([0, 1])[1] * 0.6;
+
+                                const isInRange = userRank > 0 && userRank >= item.min && userRank <= item.max;
+
+                                return {
+                                    type: 'rect',
+                                    shape: {
+                                        x: startCoord[0],
+                                        y: startCoord[1] - height / 2,
+                                        width: endCoord[0] - startCoord[0],
+                                        height: height
+                                    },
+                                    style: {
+                                        fill: isInRange ? '#000' : 'rgba(55, 128, 191, 0.6)',
+                                        stroke: isInRange ? '#000' : 'rgba(55, 128, 191, 1.0)',
+                                        lineWidth: 1
                                     }
-                                    return '#999';
-                                }
+                                };
                             },
-                            barWidth: '60%',
-                            encode: { x: 0, y: [0, 1] }
+                            data: cityData.map((d, idx) => [d.min, d.max, idx]),
+                            z: 2
                         }
                     ]
                 };
@@ -712,24 +772,22 @@
                 if (userRank > 0) {
                     option.series.push({
                         type: 'line',
-                        data: Array(dataItems.length).fill(userRank),
-                        lineStyle: { color: '#000', width: 2, type: [5, 5] },
+                        data: cityData.map(() => userRank),
+                        lineStyle: { color: '#e74c3c', width: 2, type: 'dashed' },
                         symbolSize: 0,
                         z: 10
                     });
                 }
 
                 myChart.setOption(option);
-                requestAnimationFrame(() => {
-                    requestAnimationFrame(() => myChart.resize());
-                });
-                setTimeout(() => myChart.resize(), 500);
+
+                setTimeout(() => myChart.resize(), 100);
                 window.addEventListener('resize', () => myChart.resize());
+
             } catch (err) {
-                console.error('Erreur:', err);
+                console.error('Erreur createBarPlot:', err);
             }
         }
-
         function showStatsSummary(allData, userRank, currentTotal) {
             const totalCandidates = { 2019: 8308, 2020: 8424, 2021: 8579, 2022: 8854, 2023: 9312, 2024: 7817 };
 
