@@ -11,6 +11,36 @@ use std::collections::HashMap;
 use crate::stats::{calculate_statistics, estimate_ranking};
 use crate::models::*;
 
+
+#[derive(Serialize)]
+pub struct VilleYearStats {
+    pub ville: String,
+    pub annee: u16,
+    pub rang_min: u32,
+    pub rang_max: u32,
+}
+
+#[derive(Serialize)]
+pub struct BulkVilleAllYearsResponse {
+    pub specialite: String,
+    pub mode: String,
+    pub data: Vec<VilleYearStats>,
+}
+
+#[derive(Serialize)]
+pub struct BulkVilleStats {
+    pub ville: String,
+    pub rang_min: u32,
+    pub rang_max: u32,
+}
+
+#[derive(Serialize)]
+pub struct BulkResponse {
+    pub specialite: String,
+    pub annee: u16,
+    pub mode: String,
+    pub villes: Vec<BulkVilleStats>,
+}
 #[derive(Deserialize)]
 pub struct CalculateQuery {
     pub rang: u32,
@@ -135,4 +165,106 @@ pub async fn get_min_max(
     } else {
         Err(StatusCode::NOT_FOUND)
     }
+}
+
+pub async fn get_stats_bulk(
+    Path(specialite): Path<String>,
+    Query(params): Query<HashMap<String, String>>,
+) -> Result<Json<BulkResponse>, StatusCode> {
+
+    if !is_safe_param(&specialite) {
+        return Err(StatusCode::BAD_REQUEST);
+    }
+
+    let annee = params.get("annee")
+        .and_then(|x| x.parse::<u16>().ok())
+        .unwrap_or(2025);
+
+    let mode_str = params.get("mode").map(|s| s.as_str()).unwrap_or("brute");
+    let mode = Mode::from_str(mode_str);
+
+    let records = get_records_by_specialite_mode(&specialite, Some(annee), mode);
+    if records.is_empty() {
+        return Err(StatusCode::NOT_FOUND);
+    }
+
+    use std::collections::HashMap;
+    let mut map: HashMap<String, Vec<&Record>> = HashMap::new();
+
+    for r in &records {
+        map.entry(r.ville.to_uppercase())
+            .or_insert_with(Vec::new)
+            .push(r);
+    }
+
+    let mut villes_stats = Vec::new();
+    for (ville, refs) in map {
+        let stats = calculate_statistics(&refs);
+        villes_stats.push(BulkVilleStats {
+            ville,
+            rang_min: stats.rang_min,
+            rang_max: stats.rang_max,
+        });
+    }
+
+    Ok(Json(BulkResponse {
+        specialite,
+        annee,
+        mode: mode_str.to_string(),
+        villes: villes_stats,
+    }))
+}
+
+
+
+
+pub async fn get_stats_all_years(
+    Path(specialite): Path<String>,
+    Query(params): Query<HashMap<String, String>>,
+) -> Result<Json<BulkVilleAllYearsResponse>, StatusCode> {
+
+    if !is_safe_param(&specialite) {
+        return Err(StatusCode::BAD_REQUEST);
+    }
+
+    let mode_str = params.get("mode")
+        .map(|s| s.as_str())
+        .unwrap_or("brute");
+    let mode = Mode::from_str(mode_str);
+
+    // --- Récupère TOUTES les années disponibles
+    let years = vec![2019, 2020, 2021, 2022, 2023, 2024, 2025];
+
+    let mut results = Vec::new();
+
+    for year in years {
+        let records = get_records_by_specialite_mode(&specialite, Some(year), mode.clone());
+
+        // group by ville
+        use std::collections::HashMap;
+        let mut map: HashMap<String, Vec<&Record>> = HashMap::new();
+
+        for r in &records {
+            map.entry(r.ville.to_uppercase())
+                .or_default()
+                .push(r);
+        }
+
+        // compute stats
+        for (ville, recs) in map {
+            let stats = calculate_statistics(&recs);
+            results.push(VilleYearStats {
+                ville,
+                annee: year,
+                rang_min: stats.rang_min,
+                rang_max: stats.rang_max,
+            });
+        }
+    }
+
+    Ok(Json(BulkVilleAllYearsResponse {
+        specialite,
+        mode: mode_str.to_string(),
+        data: results,
+    }))
 }

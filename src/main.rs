@@ -56,6 +56,8 @@ async fn main() {
         .route("/calculate/:specialite", get(calculate_ranking))
         .route("/health", get(health_check))
         .route("/villes", get(get_villes))
+        .route("/stats_bulk/:specialite", get(get_stats_bulk))
+        .route("/stats_all_years/:specialite", get(get_stats_all_years))
         .route("/minmax/:specialite/:ville/:annee", get(get_min_max));
 
     let app = Router::new()
@@ -72,9 +74,9 @@ async fn main() {
         .parse::<u16>()
         .expect("PORT doit être un nombre");
 
-    let addr = SocketAddr::from(([0, 0, 0, 0], port));
+   /* let addr = SocketAddr::from(([0, 0, 0, 0], port));*/
     
-    /*let addr = SocketAddr::from(([127, 0, 0, 1], port));*/
+    let addr = SocketAddr::from(([127, 0, 0, 1], port));
     println!("🌐 Serveur en écoute sur http://{}", addr);
 
     let listener = tokio::net::TcpListener::bind(&addr)

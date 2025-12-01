@@ -47,6 +47,12 @@
             gap: 2rem;
             font-size: 1.2rem;
             color: #000;
+
+            /* 🔥 Ajouts essentiels */
+            max-width: 100%;
+            overflow-x: hidden;
+            justify-content: center;
+            flex-wrap: wrap;
         }
 
         .flow-item {
@@ -323,7 +329,10 @@
                 </div>
             </div>
         </div>
-
+        <!-- Carte France -->
+        <div id="chartMapContainer" class="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm mt-6">
+            <div id="chartMap" style="height: 650px;"></div>
+        </div>
         <!-- Footer -->
         <footer class="text-center text-xs text-gray-500 py-8 border-t mt-16">
             <p>Les données affichées ont été anonymisées et catégorisées...</p>
@@ -441,6 +450,7 @@
                     createEChart(allData, userRank, specialite + (ville ? ` - ${ville}` : ''), currentTotal);
                     await createBarPlot(specialite, ville, userRank, currentTotal);
                 }
+                await createMapChart(specialite, ville, userRank, currentTotal);
 
             } catch (error) {
                 showError('Erreur: ' + error.message);
@@ -448,7 +458,127 @@
                 showLoading(false);
             }
         }
+        async function createMapChart(specialite, selectedVille, userRank, currentTotal) {
 
+            // --- Coordonnées principales + DOM-TOM placés en haut à gauche ---
+            const cityCoordinates = {
+                PARIS: [2.3522, 48.8566],
+                MARSEILLE: [5.3698, 43.2965],
+                LYON: [4.8357, 45.7640],
+                TOULOUSE: [1.4442, 43.6047],
+                NICE: [7.2619, 43.7102],
+                NANTES: [-1.5534, 47.2184],
+                MONTPELLIER: [3.8767, 43.6108],
+                STRASBOURG: [7.7521, 48.5734],
+                BORDEAUX: [-0.5792, 44.8378],
+                LILLE: [3.0573, 50.6292],
+                RENNES: [-1.6778, 48.1173],
+                REIMS: [4.0317, 49.2583],
+                TOULON: [5.9280, 43.1242],
+                DIJON: [5.04, 47.32],
+                ANGERS: [-0.55, 47.47],
+
+                // DOM-TOM placés en haut à gauche (lointains mais visibles)
+                GUADELOUPE: [-5, 51],
+                REUNION: [-5, 50]
+            };
+
+            const villes = Object.keys(cityCoordinates);
+            const total2025 = 8957; // diviseur officiel (NE PAS TOUCHER)
+            const points = [];
+
+            // --- Appel unique à l'endpoint bulk ---
+            const resp = await fetch(`/api/stats_bulk/${specialite}?annee=2025&mode=${currentMode}`);
+            if (!resp.ok) {
+                console.error("Erreur bulk endpoint");
+                return;
+            }
+            const bulk = await resp.json();
+
+            // --- Conversion des données bulk en points pour la carte ---
+            for (const entry of bulk.villes) {
+                const ville = entry.ville.toUpperCase();
+                const coords = cityCoordinates[ville];
+                if (!coords) continue;
+
+                const minN = Math.round((entry.rang_min / 8957) * currentTotal);
+                const maxN = Math.round((entry.rang_max / 8957) * currentTotal);
+
+                let emoji = "📍";
+                if (userRank <= minN) emoji = "✅";
+                else if (userRank <= maxN) emoji = "⚠️";
+                else emoji = "❌";
+
+                points.push({
+                    name: ville,
+                    value: [...coords, minN, maxN],
+                    rang_min: minN,
+                    rang_max: maxN,
+                    status: emoji
+                });
+            }
+            // --- Reset instance ECharts ---
+            const dom = document.getElementById("chartMap");
+            const prev = echarts.getInstanceByDom(dom);
+            if (prev) prev.dispose();
+
+            const chart = echarts.init(dom);
+
+            // --- Import GeoJSON France ---
+            const geo = await (await fetch(
+                "https://raw.githubusercontent.com/gregoiredavid/france-geojson/master/regions.geojson"
+            )).json();
+
+            echarts.registerMap("france", geo);
+
+            // --- Configuration finale ---
+            chart.setOption({
+                title: {
+                    text: `Carte des villes – ${specialite} (basé sur 2025)`,
+                    subtext: `Normalisé sur ${currentTotal} élèves – Données réelles 2025`,
+                    left: "center",
+                    top: 15,
+                    textStyle: { fontSize: 18 },
+                    subtextStyle: { fontSize: 12, color: "#666" }
+                },
+
+                tooltip: {
+                    formatter: p =>
+                        p.data
+                            ? `<b>${p.data.status} ${p.name}</b><br>Min : ${p.data.rang_min}<br>Max : ${p.data.rang_max}`
+                            : p.name
+                },
+
+                geo: {
+                    map: "france",
+                    roam: true,
+                    zoom: 1.15,
+                    center: [2.2, 46.5],
+                    itemStyle: {
+                        areaColor: "#eee",
+                        borderColor: "#aaa"
+                    },
+                    emphasis: {
+                        disabled: true
+                    }
+                },
+
+                series: [{
+                    type: "scatter",
+                    coordinateSystem: "geo",
+                    data: points,
+                    symbolSize: 32,
+                    label: {
+                        show: true,
+                        formatter: d => d.data.status,
+                        fontSize: 22
+                    },
+                    itemStyle: { color: "transparent" }
+                }]
+            });
+
+            window.addEventListener("resize", () => chart.resize());
+        }
         // VERSION MOBILE avec Plotly
         function createMobilePlot(allData, userRank, title, currentTotal) {
             const totalCandidates = { 2019: 8308, 2020: 8424, 2021: 8579, 2022: 8854, 2023: 9312, 2024: 7817, 2025: 8957 };
@@ -652,33 +782,34 @@
                 const totalCandidates = { 2019: 8308, 2020: 8424, 2021: 8579, 2022: 8854, 2023: 9312, 2024: 7817, 2025: 8957 };
                 const villesToAnalyze = selectedVille ? [selectedVille] : villesData.slice(0, 15);
 
-                const cityData = [];
-
-                for (const ville of villesToAnalyze) {
-                    for (const year of years) {
-                        try {
-                            const response = await fetch(
-                                `/api/stats/${encodeURIComponent(specialite)}?annee=${year}&ville=${encodeURIComponent(ville)}&mode=${encodeURIComponent(currentMode)}`
-                            );
-
-                            if (response.ok) {
-                                const data = await response.json();
-                                const normalizedMin = Math.round(((data.rang_min || 1) / totalCandidates[year]) * currentTotal);
-                                const normalizedMax = Math.round(((data.rang_max || totalCandidates[year]) / totalCandidates[year]) * currentTotal);
-
-                                cityData.push({
-                                    label: `${ville} ${year}`,
-                                    ville,
-                                    year,
-                                    min: normalizedMin,
-                                    max: normalizedMax
-                                });
-                            }
-                        } catch (e) {
-                            console.warn(`Erreur ${ville}-${year}:`, e);
-                        }
-                    }
+                // --- Nouveau fetch unique super rapide ---
+                const resp = await fetch(`/api/stats_all_years/${encodeURIComponent(specialite)}?mode=${encodeURIComponent(currentMode)}`);
+                if (!resp.ok) {
+                    console.error("Erreur stats_all_years");
+                    return;
                 }
+
+                const bulk = await resp.json();
+
+                // --- Filtrage selon ville sélectionnée ---
+                const raw = bulk.data.filter(entry =>
+                    selectedVille
+                        ? entry.ville === selectedVille.toUpperCase()
+                        : villesToAnalyze.map(v => v.toUpperCase()).includes(entry.ville)
+                );
+                // --- Conversion en format utilisé par le barplot ---
+                const cityData = raw.map(entry => {
+                    const normalizedMin = Math.round((entry.rang_min / 8957) * currentTotal);
+                    const normalizedMax = Math.round((entry.rang_max / 8957) * currentTotal);
+
+                    return {
+                        label: `${entry.ville} ${entry.annee}`,
+                        ville: entry.ville,
+                        year: entry.annee,
+                        min: normalizedMin,
+                        max: normalizedMax
+                    };
+                });
 
                 if (cityData.length === 0) return;
 
