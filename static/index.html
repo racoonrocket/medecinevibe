@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Simulez vos chances d'internat avec notre outil EDN 2025...">
-    <title>Rangs Limites EDN 2025</title>
+    <meta name="description" content="Simulez vos chances d'internat avec notre outil EDN 2025,2026...">
+    <title>Rangs Limites EDN 2026</title>
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
     <link rel="icon" type="image/png" href="/logo512512.png">
@@ -133,7 +133,7 @@
         {
         "@context": "https://schema.org",
         "@type": "SoftwareApplication",
-        "name": "Simulateur Rangs Limites EDN 2025",
+        "name": "Simulateur Rangs Limites EDN 2025/2026",
         "description": "Outil d'analyse des rangs limites d'internat de médecine avec données CESP",
         "url": "https://medecinevibe.fr",
         "applicationCategory": "EducationalApplication"
@@ -203,13 +203,14 @@
                     <img src="/logo512512.png" alt="Logo" class="w-10 h-10 opacity-80">
                     <div class="text-left">
                         <h1 class="text-2xl font-light tracking-tight">Rangs Limites EDN</h1>
-                        <p class="text-sm text-gray-500">2025</p>
+                        <p class="text-sm text-gray-500">2026</p>
                     </div>
                 </div>
                 <p class="text-gray-600 max-w-md mx-auto">
                     Visualisez les rangs d'internat par spécialité et ville
                     <br>
-                    <small class="text-gray-400">Site en refonte — n'hésitez pas à envoyer vos remarques par mail (voir
+                    <small class="text-gray-400">Les résultats de la promo 2025 sont là — n'hésitez pas à envoyer vos
+                        remarques par mail (voir
                         À propos)</small>
                 </p>
             </header>
@@ -246,9 +247,9 @@
 
                         <div>
                             <label class="block text-xs uppercase tracking-wider text-gray-500 mb-2 font-medium">
-                                Total élèves 2025
+                                Total élèves dans votre promo
                             </label>
-                            <input type="number" id="totalCandidates2025" placeholder="11800" min="1000" max="15000"
+                            <input type="number" id="totalCandidatesCurrent" placeholder="11800" min="1000" max="15000"
                                 class="glass-input w-full px-4 py-3 rounded-lg" />
                         </div>
                     </div>
@@ -327,7 +328,6 @@
         <footer class="text-center text-xs text-gray-500 py-8 border-t mt-16">
             <p>Les données affichées ont été anonymisées et catégorisées...</p>
             <p>Ce site respecte le RGPD : aucune donnée personnelle n'est collectée.</p>
-            <p>Ce site est en cours de développement (WIP)...</p>
             <a href="terms.html">CGU</a>
             <div class="space-x-4 mt-4">
                 <a href="privacy.html" class="hover:text-black transition">Confidentialité</a>
@@ -404,8 +404,8 @@
             hideError();
 
             try {
-                const years = [2019, 2020, 2021, 2022, 2023, 2024];
-                const totalCandidates = { 2019: 8308, 2020: 8424, 2021: 8579, 2022: 8854, 2023: 9312, 2024: 7817 };
+                const years = [2019, 2020, 2021, 2022, 2023, 2024, 2025];
+                const totalCandidates = { 2019: 8308, 2020: 8424, 2021: 8579, 2022: 8854, 2023: 9312, 2024: 7817, 2025: 8957 };
                 const allData = [];
 
                 for (const year of years) {
@@ -427,8 +427,8 @@
 
                 if (allData.length === 0) throw new Error('Aucune donnée trouvée');
 
-                const total2025Input = document.getElementById('totalCandidates2025').value;
-                const currentTotal = total2025Input ? parseInt(total2025Input) : 11800;
+                const totalStudentCurrent = document.getElementById('totalCandidatesCurrent').value;
+                const currentTotal = totalStudentCurrent ? parseInt(totalStudentCurrent) : 11800;
 
                 showStatsSummary(allData, userRank, currentTotal);
                 document.getElementById('results').classList.remove('hidden');
@@ -451,7 +451,7 @@
 
         // VERSION MOBILE avec Plotly
         function createMobilePlot(allData, userRank, title, currentTotal) {
-            const totalCandidates = { 2019: 8308, 2020: 8424, 2021: 8579, 2022: 8854, 2023: 9312, 2024: 7817 };
+            const totalCandidates = { 2019: 8308, 2020: 8424, 2021: 8579, 2022: 8854, 2023: 9312, 2024: 7817, 2025: 8957 };
 
             const normalizedData = allData.map(d => ({
                 year: d.year,
@@ -560,7 +560,7 @@
         function createEChart(allData, userRank, title, currentTotal) {
             const chartDom = document.getElementById('chart');
             const container = document.getElementById('chartContainer');
-            const totalCandidates = { 2019: 8308, 2020: 8424, 2021: 8579, 2022: 8854, 2023: 9312, 2024: 7817 };
+            const totalCandidates = { 2019: 8308, 2020: 8424, 2021: 8579, 2022: 8854, 2023: 9312, 2024: 7817, 2025: 8957 };
 
             const existingChart = echarts.getInstanceByDom(chartDom);
             if (existingChart) existingChart.dispose();
@@ -648,8 +648,8 @@
 
         async function createBarPlot(specialite, selectedVille, userRank, currentTotal) {
             try {
-                const years = [2019, 2020, 2021, 2022, 2023, 2024];
-                const totalCandidates = { 2019: 8308, 2020: 8424, 2021: 8579, 2022: 8854, 2023: 9312, 2024: 7817 };
+                const years = [2019, 2020, 2021, 2022, 2023, , 2025];
+                const totalCandidates = { 2019: 8308, 2020: 8424, 2021: 8579, 2022: 8854, 2023: 9312, 2024: 7817, 2025: 8957 };
                 const villesToAnalyze = selectedVille ? [selectedVille] : villesData.slice(0, 15);
 
                 const cityData = [];
@@ -790,7 +790,7 @@
             }
         }
         function showStatsSummary(allData, userRank, currentTotal) {
-            const totalCandidates = { 2019: 8308, 2020: 8424, 2021: 8579, 2022: 8854, 2023: 9312, 2024: 7817 };
+            const totalCandidates = { 2019: 8308, 2020: 8424, 2021: 8579, 2022: 8854, 2023: 9312, 2024: 7817, 2025: 8957 };
 
             const normalizedData = allData.map(d => ({
                 rang_min_normalized: Math.round((d.rang_min / totalCandidates[d.year]) * currentTotal),
