@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Simulez vos chances d'internat avec notre outil EDN 2025,2026...">
-    <title>Rangs Limites EDN 2026</title>
+    <title>Rangs Limites EDN 2025 & 2026</title>
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
     <link rel="icon" type="image/png" href="/logo512512.png">
@@ -130,6 +130,23 @@
             height: 2px;
             background: #000;
         }
+
+        @media (max-width: 768px) {
+
+            /* Empêche les titres des cartes et graphiques de déborder */
+            #chartMap div,
+            #chart div {
+                white-space: normal !important;
+                word-break: break-word !important;
+            }
+
+            /* Réduit les titres trop gros */
+            .echarts-title,
+            .plotly .gtitle {
+                font-size: 14px !important;
+                line-height: 1.2 !important;
+            }
+        }
     </style>
 
 
@@ -139,7 +156,7 @@
         {
         "@context": "https://schema.org",
         "@type": "SoftwareApplication",
-        "name": "Simulateur Rangs Limites EDN 2025/2026",
+        "name": "Simulateur Rangs Limites EDN 2025 & 2026",
         "description": "Outil d'analyse des rangs limites d'internat de médecine avec données CESP",
         "url": "https://medecinevibe.fr",
         "applicationCategory": "EducationalApplication"
@@ -209,7 +226,7 @@
                     <img src="/logo512512.png" alt="Logo" class="w-10 h-10 opacity-80">
                     <div class="text-left">
                         <h1 class="text-2xl font-light tracking-tight">Rangs Limites EDN</h1>
-                        <p class="text-sm text-gray-500">2026</p>
+                        <p class="text-sm text-gray-500">2025</p>
                     </div>
                 </div>
                 <p class="text-gray-600 max-w-md mx-auto">
@@ -312,6 +329,12 @@
                     </div>
                 </div>
 
+
+                <!-- Carte France -->
+                <div id="chartMapContainer" class="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm mt-6">
+                    <div id="chartMap" style="height: 650px;"></div>
+                </div>
+                <div class="flex gap-8 mb-8 border-b"></div>
                 <!-- Onglets -->
                 <div class="flex gap-8 mb-8 border-b">
                     <button id="tabEvolution" class="tab-minimal active text-sm font-medium">
@@ -321,17 +344,12 @@
                         Par ville
                     </button>
                 </div>
-
                 <!-- Graphiques -->
                 <div id="chartContainer" class="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm">
                     <div id="chart" style="height: 600px;"></div>
                     <div id="chartVilles" class="hidden" style="height: 600px;"></div>
                 </div>
             </div>
-        </div>
-        <!-- Carte France -->
-        <div id="chartMapContainer" class="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm mt-6">
-            <div id="chartMap" style="height: 650px;"></div>
         </div>
         <!-- Footer -->
         <footer class="text-center text-xs text-gray-500 py-8 border-t mt-16">
@@ -377,7 +395,10 @@
         });
 
         document.querySelector('.mode-btn[data-mode="0"]').classList.add('bg-black', 'text-white', 'border-black');
-
+        function wrapTitle(text) {
+            if (window.innerWidth > 480) return text;
+            return text.replace(/(.{18})/g, '$1\n');  // coupe tous les 18 chars
+        }
         async function loadInitialData() {
             try {
                 const response = await fetch('/api/specialites');
@@ -534,12 +555,19 @@
             // --- Configuration finale ---
             chart.setOption({
                 title: {
-                    text: `Carte des villes – ${specialite} (basé sur 2025)`,
-                    subtext: `Normalisé sur ${currentTotal} élèves – Données réelles 2025`,
+                    text: wrapTitle(`Carte des villes – ${specialite} ( basé sur 2025 )`),
+                    subtext: `Normalisé sur ${currentTotal} élèves – 2025 uniquement`,
                     left: "center",
                     top: 15,
-                    textStyle: { fontSize: 18 },
-                    subtextStyle: { fontSize: 12, color: "#666" }
+                    textStyle: {
+                        fontSize: window.innerWidth < 480 ? 13 : 18,   // plus petit sur mobile
+                        lineHeight: 18,
+                        width: window.innerWidth < 480 ? 180 : null    // force un wrap
+                    },
+                    subtextStyle: {
+                        fontSize: window.innerWidth < 480 ? 10 : 12,
+                        color: "#666"
+                    }
                 },
 
                 tooltip: {
