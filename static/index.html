@@ -567,25 +567,34 @@
 
             // --- Coordonnées principales + DOM-TOM placés en haut à gauche ---
             const cityCoordinates = {
-                PARIS: [2.3522, 48.8566],
-                MARSEILLE: [5.3698, 43.2965],
-                LYON: [4.8357, 45.7640],
-                TOULOUSE: [1.4442, 43.6047],
-                NICE: [7.2619, 43.7102],
-                NANTES: [-1.5534, 47.2184],
-                MONTPELLIER: [3.8767, 43.6108],
-                STRASBOURG: [7.7521, 48.5734],
-                BORDEAUX: [-0.5792, 44.8378],
-                LILLE: [3.0573, 50.6292],
-                RENNES: [-1.6778, 48.1173],
-                REIMS: [4.0317, 49.2583],
-                TOULON: [5.9280, 43.1242],
-                DIJON: [5.04, 47.32],
-                ANGERS: [-0.55, 47.47],
-
-                // DOM-TOM placés en haut à gauche (lointains mais visibles)
-                GUADELOUPE: [-5, 51],
-                REUNION: [-5, 50]
+                "POITIERS": [0.3404, 46.5802],
+                "SAINT-ETIENNE": [4.3903, 45.4397],
+                "LIMOGES": [1.2611, 45.8336],
+                "BORDEAUX": [-0.5792, 44.8378],
+                "LYON": [4.8357, 45.7640],
+                "ROUEN": [1.0993, 49.4431],
+                "ANGERS": [-0.5632, 47.4784],
+                "STRASBOURG": [7.7521, 48.5734],
+                "DIJON": [5.0415, 47.3220],
+                "NANCY": [6.1844, 48.6921],
+                "LA REUNION": [-5, 50],        // 👈 FAUSSE POSITION DOM-TOM
+                "CAEN": [-0.3707, 49.1829],
+                "LILLE": [3.0573, 50.6292],
+                "MARSEILLE": [5.3698, 43.2965],
+                "RENNES": [-1.6778, 48.1173],
+                "GUADELOUPE": [-5, 51],        // 👈 FAUSSE POSITION DOM-TOM
+                "AMIENS": [2.2957, 49.8954],
+                "MONTPELLIER": [3.8767, 43.6108],
+                "GRENOBLE": [5.7245, 45.1885],
+                "CLERMONT-FERRAND": [3.0870, 45.7786],
+                "BREST": [-4.4871, 48.3904],
+                "NANTES": [-1.5534, 47.2184],
+                "TOULOUSE": [1.4442, 43.6047],
+                "PARIS": [2.3522, 48.8566],
+                "NICE": [7.2619, 43.7102],
+                "REIMS": [4.0317, 49.2583],
+                "TOURS": [0.6848, 47.3941],
+                "BESANCON": [6.0256, 47.2378]
             };
 
             const villes = Object.keys(cityCoordinates);
