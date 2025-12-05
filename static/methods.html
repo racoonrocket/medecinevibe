@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+<script src="https://cdn.tailwindcss.com"></script>
 
 <head>
     <meta charset="UTF-8" />
@@ -247,20 +248,84 @@
                 préserver une 'justesse statistique' en tout cas c'est le but.</p>
         </div>
 
-        <!-- Section discrète -->
-        <div class="affiliation-section">
-            <div class="video-container" onclick="window.open('https://csgocases.com/r/Azeflow', '_blank')">
-                <video class="affiliation-video" autoplay loop muted playsinline preload="metadata">
-                    <source src="banner.mp4" type="video/mp4">
-                    Votre navigateur ne supporte pas la lecture de vidéos.
-                </video>
-            </div>
-
-            <p style="text-align: center; color: #666; font-size: 0.9em; margin: 5px 0;">
-                <a href="https://votre-lien-affiliation.com" class="affiliation-link" target="_blank"
-                    rel="noopener">Plus d'informations</a>
+        <!-- Carrousel Amazon (caché au départ) -->
+        <div id="amazonCarousel" class="max-w-6xl mx-auto px-6 mt-10 mb-16">
+            <h2 class="text-lg font-semibold mb-2">Livres utiles pour préparer les EDN</h2>
+            <p class="text-gray-500 text-xs mb-4">
+                Sélection courte de livres de préparation. Affiliation Amazon.
             </p>
+
+            <div class="book-carousel overflow-x-auto whitespace-nowrap py-2">
+
+                <div class="inline-block align-top w-52 mr-3 bg-white border border-gray-200 rounded-xl shadow-sm p-3">
+                    <a href="https://amzn.to/4rF9qBW" target="_blank" rel="noopener noreferrer">
+                        <img src="https://m.media-amazon.com/images/I/61K+2C84x-L._SL1414_.jpg"
+                            class="w-full h-auto rounded mb-2">
+                        <span class="text-sm font-medium block mb-1">Livre 1</span>
+                        <span class="block text-center bg-black text-white py-1.5 rounded text-xs">
+                            Voir sur Amazon
+                        </span>
+                    </a>
+                </div>
+
+                <div class="inline-block align-top w-52 mr-3 bg-white border border-gray-200 rounded-xl shadow-sm p-3">
+                    <a href="https://amzn.to/3KE2EM6" target="_blank" rel="noopener noreferrer">
+                        <img src="https://m.media-amazon.com/images/I/61Rq9jFzI4L._SL1414_.jpg"
+                            class="w-full h-auto rounded mb-2">
+                        <span class="text-sm font-medium block mb-1">Livre 2</span>
+                        <span class="block text-center bg-black text-white py-1.5 rounded text-xs">
+                            Voir sur Amazon
+                        </span>
+                    </a>
+                </div>
+
+                <div class="inline-block align-top w-52 mr-3 bg-white border border-gray-200 rounded-xl shadow-sm p-3">
+                    <a href="https://amzn.to/48kkSvl" target="_blank" rel="noopener noreferrer">
+                        <img src="https://m.media-amazon.com/images/I/61wd2gwr49L._SL1414_.jpg"
+                            class="w-full h-auto rounded mb-2">
+                        <span class="text-sm font-medium block mb-1">Livre 3</span>
+                        <span class="block text-center bg-black text-white py-1.5 rounded text-xs">
+                            Voir sur Amazon
+                        </span>
+                    </a>
+                </div>
+
+                <div class="inline-block align-top w-52 mr-3 bg-white border border-gray-200 rounded-xl shadow-sm p-3">
+                    <a href="https://amzn.to/4plK0rN" target="_blank" rel="noopener noreferrer">
+                        <img src="https://m.media-amazon.com/images/I/61eD3Cx5QyL._SL1414_.jpg"
+                            class="w-full h-auto rounded mb-2">
+                        <span class="text-sm font-medium block mb-1">Livre 4</span>
+                        <span class="block text-center bg-black text-white py-1.5 rounded text-xs">
+                            Voir sur Amazon
+                        </span>
+                    </a>
+                </div>
+
+                <div class="inline-block align-top w-52 mr-3 bg-white border border-gray-200 rounded-xl shadow-sm p-3">
+                    <a href="https://amzn.to/48zNzU1" target="_blank" rel="noopener noreferrer">
+                        <img src="https://m.media-amazon.com/images/I/71Dz2KFf5kL._SL1500_.jpg"
+                            class="w-full h-auto rounded mb-2">
+                        <span class="text-sm font-medium block mb-1">Livre 5</span>
+                        <span class="block text-center bg-black text-white py-1.5 rounded text-xs">
+                            Voir sur Amazon
+                        </span>
+                    </a>
+                </div>
+
+            </div>
         </div>
+
+        <style>
+            .book-carousel {
+                scroll-snap-type: x mandatory;
+            }
+
+            .book-carousel>div {
+                scroll-snap-align: start;
+            }
+        </style>
+
+    </div>
     </div>
 </body>
 
