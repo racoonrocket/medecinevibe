@@ -31,7 +31,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            animation: fadeOut 0.8s ease 3s forwards;
+            animation: fadeOut 0.8s ease 3.5s forwards;
         }
 
         @keyframes fadeOut {
@@ -183,10 +183,11 @@
 
 </head>
 
-<body class="bg-gray-50">
+<body class="bg-lass=" bg-gradient-to-b from-gray-50 to-gray-100-50">
     <!-- Animation d'intro -->
     <div class="intro-overlay">
         <div class="flow-container">
+            <img src="santa.gif" class="absolute top-6 center-6 w-32 opacity-90 santa-intro">
             <div class="flow-item" style="animation-delay: 0s;">
                 <div class="text-center">
                     <div class="text-sm uppercase tracking-wider text-gray-500 mb-2">Source</div>
@@ -237,13 +238,77 @@
                         remarques par mail (voir
                         À propos)</small>
                 </p>
+
             </header>
-            <p class="text-gray-700 text-sm mb-6 max-w-2xl mx-auto text-center">
+            <p class="text-gray-700 text-sm mb-6 max-w-none md:max-w-3xl lg:max-w-4xl mx-auto">
                 Le simulateur normalise les rangs des années précédentes en tenant compte du nombre total
                 d’étudiants par promotion, afin de comparer équitablement les résultats.
                 Vous pouvez également activer différents modes pour estimer l’impact du CESP.
                 Nous vous conseillons la page Méthodologie pour bien comprendre le fonctionnement du site.
             </p>
+            <!-- Carrousel Amazon (caché au départ) -->
+            <div id="amazonCarousel" class="max-w-6xl mx-auto px-6 mt-10 mb-6">
+                <h3 class="text-lg font-semibold mb-4">Quelques livres pour réviser</h3>
+                <div class="book-carousel overflow-x-auto whitespace-nowrap py-2">
+
+                    <div
+                        class="inline-block align-top w-44 mr-3 bg-white border border-gray-200 rounded-xl shadow-sm p-3">
+                        <a href="https://amzn.to/4rF9qBW" target="_blank" rel="noopener noreferrer">
+                            <img src="https://m.media-amazon.com/images/I/61K+2C84x-L._SL1414_.jpg"
+                                class="h-36 w-auto mx-auto object-contain rounded mb-2">
+                            <span class="text-sm font-medium block mb-1">Ecos 1</span>
+                            </span>
+                        </a>
+                    </div>
+
+                    <div
+                        class="inline-block align-top w-44 mr-3 bg-white border border-gray-200 rounded-xl shadow-sm p-3">
+                        <a href="https://amzn.to/3KE2EM6" target="_blank" rel="noopener noreferrer">
+                            <img src="https://m.media-amazon.com/images/I/61Rq9jFzI4L._SL1414_.jpg"
+                                class="h-36 w-auto mx-auto object-contain rounded mb-2">
+                            <span class="text-sm font-medium block mb-1">Ecos 2</span>
+                        </a>
+                    </div>
+
+                    <div
+                        class="inline-block align-top w-44 mr-3 bg-white border border-gray-200 rounded-xl shadow-sm p-3">
+                        <a href="https://amzn.to/48kkSvl" target="_blank" rel="noopener noreferrer">
+                            <img src="https://m.media-amazon.com/images/I/61wd2gwr49L._SL1414_.jpg"
+                                class="h-36 w-auto mx-auto object-contain rounded mb-2">
+                            <span class="text-sm font-medium block mb-1">Ecos 3</span>
+                        </a>
+                    </div>
+
+                    <div
+                        class="inline-block align-top w-44 mr-3 bg-white border border-gray-200 rounded-xl shadow-sm p-3">
+                        <a href="https://amzn.to/4plK0rN" target="_blank" rel="noopener noreferrer">
+                            <img src="https://m.media-amazon.com/images/I/61eD3Cx5QyL._SL1414_.jpg"
+                                class="h-36 w-auto mx-auto object-contain rounded mb-2">
+                            <span class="text-sm font-medium block mb-1">Ecos 4</span>
+                        </a>
+                    </div>
+
+                    <div
+                        class="inline-block align-top w-44 mr-3 bg-white border border-gray-200 rounded-xl shadow-sm p-3">
+                        <a href="https://amzn.to/48zNzU1" target="_blank" rel="noopener noreferrer">
+                            <img src="https://m.media-amazon.com/images/I/71Dz2KFf5kL._SL1500_.jpg"
+                                class="h-36 w-auto mx-auto object-contain rounded mb-2">
+                            <span class="text-sm font-medium block mb-1">Ecos 1bis</span>
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+
+            <style>
+                .book-carousel {
+                    scroll-snap-type: x mandatory;
+                }
+
+                .book-carousel>div {
+                    scroll-snap-align: start;
+                }
+            </style>
 
             <!-- Formulaire -->
             <div class="bg-white border border-gray-200 rounded-2xl p-8 mb-12 shadow-sm">
