@@ -112,29 +112,53 @@
 
 </head>
 
-<!-- Contenu principal -->
-<div class="main-content min-h-screen">
-    <div class="max-w-6xl mx-auto px-6 py-12">
-        <!-- Header minimaliste -->
-        <header class="mb-16 text-center">
-            <div class="inline-flex items-center gap-3 mb-4">
-                <img src="/logo512512.png" alt="Logo" class="w-10 h-10 opacity-80">
-                <div class="text-left">
-                    <h1 class="text-2xl font-light tracking-tight">Rangs Limites EDN</h1>
-                    <p class="text-sm text-gray-500">2025</p>
-                </div>
-            </div>
-            <p class="text-gray-600 max-w-md mx-auto">
+
+<!-- NAVBAR FIXE PREMIUM -->
+<header class="fixed top-0 left-0 w-full bg-white shadow-md z-50">
+    <nav class="max-w-6xl mx-auto px-6 py-4 flex flex-wrap items-center gap-y-3">
+
+        <!-- Logo + titre -->
+        <div class="flex items-center gap-3 mr-auto">
+            <img src="/logo512512.png" class="w-9 h-9 opacity-90">
+            <span class="text-lg font-semibold text-gray-900 tracking-tight">MedecineVibe</span>
+        </div>
+
+        <!-- Liens -->
+        <div class="flex items-center gap-6 text-sm font-medium w-full md:w-auto md:ml-auto">
+            <a href="matrix.html" class="text-gray-700 hover:text-black transition">
+                Matrice Ville·Spé
+            </a>
+            <a href="methods.html" class="text-gray-700 hover:text-black transition">
+                Méthodologie
+            </a>
+        </div>
+
+    </nav>
+</header>
+
+<div class="main-content min-h-screen pt-20 md:pt-16">
+    <div class="max-w-6xl mx-auto px-6 py-12 relative">
+
+        <!-- Header principal aligné à gauche -->
+        <header class="mb-6 text-left max-w-2xl pt-2">
+
+            <h1 class="text-3xl font-semibold tracking-tight mb-4 flex items-center gap-3">
+                Rangs Limites EDN 2025
+            </h1>
+
+            <p class="text-gray-600 leading-relaxed">
                 Simulateur EDN : visualisez les rangs d'internat par spécialité et par ville,
                 et estimez les villes accessibles selon votre classement.
                 <br>
-                <small class="text-gray-400">Les résultats de la promo 2025 sont là — n'hésitez pas à envoyer vos
-                    remarques par mail (voir
-                    À propos)</small>
+                <small class="text-gray-400">
+                    Les résultats de la promo 2025 sont là — n'hésitez pas à envoyer vos remarques par mail
+                    (voir À propos)
+                </small>
             </p>
-
         </header>
-        <p class="text-gray-700 text-sm mb-6 max-w-none md:max-w-3xl lg:max-w-4xl mx-auto">
+
+        <!-- Paragraphe explicatif aligné à gauche -->
+        <p class="text-gray-700 text-sm mb-6 max-w-3xl">
             Le simulateur normalise les rangs des années précédentes en tenant compte du nombre total
             d’étudiants par promotion, afin de comparer équitablement les résultats.
             Vous pouvez également activer différents modes pour estimer l’impact du CESP.
@@ -203,14 +227,6 @@
                         <button type="submit"
                             class="flex-1 md:flex-none bg-black hover:bg-gray-800 text-white px-8 py-3 rounded-lg font-medium transition">
                             Analyser
-                        </button>
-                        <button type="button" onclick="window.open('matrix.html', '_blank')"
-                            class="flex-1 md:flex-none bg-black hover:bg-gray-800 text-white px-8 py-3 rounded-lg font-medium transition">
-                            Matrice Ville*Spé
-                        </button>
-                        <button type="button" onclick="window.open('methods.html', '_blank')"
-                            class="text-sm text-gray-600 hover:text-black transition underline">
-                            Méthodologie
                         </button>
                     </div>
                 </div>
