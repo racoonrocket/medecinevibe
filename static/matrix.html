@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matrice Spécialités × Villes — EDN</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        /* Freeze première ligne */
+        th {
+            position: sticky;
+            top: 0;
+            background: #f9fafb;
+            z-index: 10;
+        }
+
+        /* Freeze première colonne */
+        th:first-child,
+        td:first-child {
+            position: sticky;
+            left: 0;
+            background: #f3f4f6;
+            z-index: 20;
+        }
+    </style>
+</head>
+
+<body class="p-6 bg-gray-50">
+    <div class="max-w-6xl mx-auto">
+
+        <h1 id="title" class="text-2xl font-semibold text-center mb-6">
+            Matrice Spécialités × Villes
+        </h1>
+
+        <div class="bg-white border border-gray-200 p-6 rounded-xl shadow-sm mb-6">
+
+            <!-- Choix année -->
+            <label class="text-sm text-gray-600">Année</label>
+            <select id="annee" class="w-full px-3 py-2 border rounded-lg mt-2">
+                <option value="2025">2025</option>
+                <option value="2024">2024</option>
+                <option value="2023">2023</option>
+                <option value="2022">2022</option>
+            </select>
+
+            <label class="text-sm text-gray-600 mt-4 block">Votre rang</label>
+            <input id="userRank" type="number" placeholder="1500" class="w-full px-3 py-2 border rounded-lg mt-2">
+
+            <label class="text-sm text-gray-600 mt-4 block">Total élèves</label>
+            <input id="total" type="number" placeholder="11800" class="w-full px-3 py-2 border rounded-lg mt-2">
+
+            <!-- ==== AJOUT : BOUTONS MODE ==== -->
+            <div class="mt-6">
+                <label class="text-sm text-gray-600 block mb-2">Mode</label>
+                <div class="flex gap-2">
+                    <button type="button" data-mode="0"
+                        class="mode-btn px-4 py-2 text-sm rounded-lg border border-gray-300 transition">
+                        Brute
+                    </button>
+                    <button type="button" data-mode="1"
+                        class="mode-btn px-4 py-2 text-sm rounded-lg border border-gray-300 transition">
+                        Sans CESP
+                    </button>
+                    <button type="button" data-mode="2"
+                        class="mode-btn px-4 py-2 text-sm rounded-lg border border-gray-300 transition">
+                        Ajusté
+                    </button>
+                </div>
+            </div>
+
+            <button onclick="loadMatrix()" class="w-full bg-black text-white py-3 rounded-lg mt-4">
+                Générer la matrice
+            </button>
+            <a href="index.html" class="btn-back">← Retour</a>
+        </div>
+
+        <!-- Légende -->
+        <div class="flex items-center gap-6 bg-white border border-gray-200 px-4 py-3 rounded-xl shadow-sm mb-6">
+            <div class="flex items-center gap-2"><span class="text-xl">✅</span><span
+                    class="text-sm text-gray-700">Au-dessus du dernier appelé</span></div>
+            <div class="flex items-center gap-2"><span class="text-xl">⚠️</span><span
+                    class="text-sm text-gray-700">Entre le premier et le dernier appelé</span></div>
+            <div class="flex items-center gap-2"><span class="text-xl">❌</span><span class="text-sm text-gray-700">
+                    Sous le dernier appelé</span></div>
+        </div>
+
+        <!-- Scroll visible autour du tableau -->
+        <div id="matrix" class="overflow-x-auto overflow-y-auto max-h-[70vh]"></div>
+
+    </div>
+
+    <script>
+
+        /* =====================
+           LOGIQUE MODE INDEX.HTML
+           ===================== */
+
+        let currentMode = "brute";
+        const modes = ["brute", "sans cesp", "ajuste"];
+
+        // Activation visuelle des boutons
+        document.querySelectorAll('.mode-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+
+                document.querySelectorAll('.mode-btn').forEach(b => {
+                    b.classList.remove('bg-black', 'text-white', 'border-black');
+                    b.classList.add('border-gray-300');
+                });
+
+                btn.classList.add('bg-black', 'text-white', 'border-black');
+                currentMode = modes[parseInt(btn.dataset.mode)];
+            });
+        });
+
+        // Mettre "Brute" actif au chargement
+        document.querySelector('.mode-btn[data-mode="0"]').classList.add("bg-black", "text-white", "border-black");
+
+
+        /* ============================
+           CHARGEMENT MATRICE
+           ============================ */
+
+        async function loadMatrix() {
+            const annee = document.getElementById("annee").value;
+            const userRank = parseInt(document.getElementById("userRank").value);
+            const total = parseInt(document.getElementById("total").value) || 11800;
+
+            if (!userRank) {
+                alert("Veuillez entrer un rang");
+                return;
+            }
+
+            const matrixDiv = document.getElementById("matrix");
+            matrixDiv.innerHTML = `
+                <div class="text-center">
+                    <img src="santa.gif" class="mx-auto w-24 h-24 mb-2" alt="loading">
+                    <p>Chargement…</p>
+                </div>`;
+
+            // 1) récupérer les spécialités
+            const resp = await fetch("/api/specialites");
+            const data = await resp.json();
+
+            const specs = data.specialites.sort();
+            const villeSet = new Set();
+            const matrix = {};
+
+            const batchSize = 15;
+
+            // 2) Appels API avec le mode
+            for (let i = 0; i < specs.length; i += batchSize) {
+                const batch = specs.slice(i, i + batchSize);
+
+                const responses = await Promise.all(
+                    batch.map(spe =>
+                        fetch(`/api/stats_bulk/${encodeURIComponent(spe)}?annee=${annee}&mode=${encodeURIComponent(currentMode)}`)
+                            .then(r => r.ok ? r.json() : null)
+                    )
+                );
+
+                responses.forEach((bulk, idx) => {
+                    const spe = batch[idx];
+                    if (!bulk) return;
+
+                    matrix[spe] = {};
+
+                    for (const entry of bulk.villes) {
+                        const ville = entry.ville.toUpperCase();
+                        villeSet.add(ville);
+
+                        const minN = Math.round((entry.rang_min / 8957) * total);
+                        const maxN = Math.round((entry.rang_max / 8957) * total);
+
+                        let emoji = "❌";
+                        if (userRank <= minN) emoji = "✅";
+                        else if (userRank <= maxN) emoji = "⚠️";
+
+                        matrix[spe][ville] = emoji;
+                    }
+                });
+            }
+
+            const villeList = [...villeSet].sort();
+
+            // 3) Construire la table HTML
+            let html = `<table class="min-w-full text-sm border-collapse">
+                <thead><tr>
+                    <th class="border px-3 py-2 bg-gray-100 text-left">Spécialité</th>`;
+
+            villeList.forEach(v => {
+                html += `<th class="border px-3 py-2 bg-gray-50 text-center">${v}</th>`;
+            });
+
+            html += `</tr></thead><tbody>`;
+
+            for (const spe of specs) {
+                html += `<tr>
+                    <td class="border px-3 py-2 font-medium bg-gray-50">${spe}</td>`;
+
+                villeList.forEach(v => {
+                    const emoji = matrix[spe]?.[v] || "—";
+                    html += `<td class="border px-3 py-2 text-center">${emoji}</td>`;
+                });
+
+                html += `</tr>`;
+            }
+
+            html += `</tbody></table>`;
+            matrixDiv.innerHTML = html;
+        }
+
+    </script>
+
+</body>
+
+</html>

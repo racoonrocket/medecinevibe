@@ -22,77 +22,6 @@
             font-family: 'Inter', sans-serif;
         }
 
-        /* Animation d'intro */
-        .intro-overlay {
-            position: fixed;
-            inset: 0;
-            background: white;
-            z-index: 9999;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            animation: fadeOut 0.8s ease 3.5s forwards;
-        }
-
-        @keyframes fadeOut {
-            to {
-                opacity: 0;
-                pointer-events: none;
-            }
-        }
-
-        .flow-container {
-            display: flex;
-            align-items: center;
-            gap: 2rem;
-            font-size: 1.2rem;
-            color: #000;
-
-            /* 🔥 Ajouts essentiels */
-            max-width: 100%;
-            overflow-x: hidden;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .flow-item {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-
-        .flow-item.show {
-            animation: slideUp 0.6s ease forwards;
-        }
-
-        @keyframes slideUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .flow-arrow {
-            font-size: 2rem;
-            opacity: 0;
-            animation: fadeInArrow 0.4s ease 1s forwards;
-        }
-
-        @keyframes fadeInArrow {
-            to {
-                opacity: 0.3;
-            }
-        }
-
-        .main-content {
-            opacity: 0;
-            animation: fadeInContent 0.6s ease 3.2s forwards;
-        }
-
-        @keyframes fadeInContent {
-            to {
-                opacity: 1;
-            }
-        }
 
         body {
             background: #fafafa;
@@ -183,307 +112,173 @@
 
 </head>
 
-<body class="bg-lass=" bg-gradient-to-b from-gray-50 to-gray-100-50">
-    <!-- Animation d'intro -->
-    <div class="intro-overlay">
-        <div class="flow-container">
-            <img src="santa.gif" class="absolute top-6 center-6 w-32 opacity-90 santa-intro">
-            <div class="flow-item" style="animation-delay: 0s;">
-                <div class="text-center">
-                    <div class="text-sm uppercase tracking-wider text-gray-500 mb-2">Source</div>
-                    <div class="font-semibold">📄 Légifrance</div>
-                    <div class="text-xs text-gray-400 mt-1">Données brutes</div>
+<!-- Contenu principal -->
+<div class="main-content min-h-screen">
+    <div class="max-w-6xl mx-auto px-6 py-12">
+        <!-- Header minimaliste -->
+        <header class="mb-16 text-center">
+            <div class="inline-flex items-center gap-3 mb-4">
+                <img src="/logo512512.png" alt="Logo" class="w-10 h-10 opacity-80">
+                <div class="text-left">
+                    <h1 class="text-2xl font-light tracking-tight">Rangs Limites EDN</h1>
+                    <p class="text-sm text-gray-500">2025</p>
                 </div>
             </div>
-
-            <div class="flow-arrow">→</div>
-
-            <div class="flow-item" style="animation-delay: 0.8s;">
-                <div class="text-center">
-                    <div class="text-sm uppercase tracking-wider text-gray-500 mb-2">Traitement</div>
-                    <div class="font-semibold">⚙️ Analyse</div>
-                    <div class="text-xs text-gray-400 mt-1">Simulation</div>
-                </div>
-            </div>
-
-            <div class="flow-arrow">→</div>
-
-            <div class="flow-item" style="animation-delay: 1.6s;">
-                <div class="text-center">
-                    <div class="text-sm uppercase tracking-wider text-gray-500 mb-2">Résultat</div>
-                    <div class="font-semibold">📊 Statistiques</div>
-                    <div class="text-xs text-gray-400 mt-1">Visualisation</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Contenu principal -->
-    <div class="main-content min-h-screen">
-        <div class="max-w-6xl mx-auto px-6 py-12">
-            <!-- Header minimaliste -->
-            <header class="mb-16 text-center">
-                <div class="inline-flex items-center gap-3 mb-4">
-                    <img src="/logo512512.png" alt="Logo" class="w-10 h-10 opacity-80">
-                    <div class="text-left">
-                        <h1 class="text-2xl font-light tracking-tight">Rangs Limites EDN</h1>
-                        <p class="text-sm text-gray-500">2025</p>
-                    </div>
-                </div>
-                <p class="text-gray-600 max-w-md mx-auto">
-                    Simulateur EDN : visualisez les rangs d'internat par spécialité et par ville,
-                    et estimez les villes accessibles selon votre classement.
-                    <br>
-                    <small class="text-gray-400">Les résultats de la promo 2025 sont là — n'hésitez pas à envoyer vos
-                        remarques par mail (voir
-                        À propos)</small>
-                </p>
-
-            </header>
-            <p class="text-gray-700 text-sm mb-6 max-w-none md:max-w-3xl lg:max-w-4xl mx-auto">
-                Le simulateur normalise les rangs des années précédentes en tenant compte du nombre total
-                d’étudiants par promotion, afin de comparer équitablement les résultats.
-                Vous pouvez également activer différents modes pour estimer l’impact du CESP.
-                Nous vous conseillons la page Méthodologie pour bien comprendre le fonctionnement du site.
+            <p class="text-gray-600 max-w-md mx-auto">
+                Simulateur EDN : visualisez les rangs d'internat par spécialité et par ville,
+                et estimez les villes accessibles selon votre classement.
+                <br>
+                <small class="text-gray-400">Les résultats de la promo 2025 sont là — n'hésitez pas à envoyer vos
+                    remarques par mail (voir
+                    À propos)</small>
             </p>
-            <!-- Carrousel Amazon (caché au départ) -->
-            <div id="amazonCarousel" class="max-w-6xl mx-auto px-6 mt-10 mb-6">
-                <h3 class="text-lg font-semibold mb-4">Quelques livres pour réviser</h3>
-                <div class="book-carousel overflow-x-auto whitespace-nowrap py-2">
 
-                    <div
-                        class="inline-block align-top w-44 mr-3 bg-white border border-gray-200 rounded-xl shadow-sm p-3">
-                        <a href="https://amzn.to/4rF9qBW" target="_blank" rel="noopener noreferrer">
-                            <img src="https://m.media-amazon.com/images/I/61K+2C84x-L._SL1414_.jpg"
-                                class="h-36 w-auto mx-auto object-contain rounded mb-2">
-                            <span class="text-sm font-medium block mb-1">Ecos méthodo</span>
-                            </span>
-                        </a>
+        </header>
+        <p class="text-gray-700 text-sm mb-6 max-w-none md:max-w-3xl lg:max-w-4xl mx-auto">
+            Le simulateur normalise les rangs des années précédentes en tenant compte du nombre total
+            d’étudiants par promotion, afin de comparer équitablement les résultats.
+            Vous pouvez également activer différents modes pour estimer l’impact du CESP.
+            Nous vous conseillons la page Méthodologie pour bien comprendre le fonctionnement du site.
+        </p>
+
+        <!-- Formulaire -->
+        <div class="bg-white border border-gray-200 rounded-2xl p-8 mb-2 shadow-sm">
+            <form id="analysisForm" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div>
+                        <label class="block text-xs uppercase tracking-wider text-gray-500 mb-2 font-medium">
+                            Spécialité
+                        </label>
+                        <select id="specialite" required class="glass-input w-full px-4 py-3 rounded-lg">
+                            <option value="">Sélectionner</option>
+                        </select>
                     </div>
 
-                    <div
-                        class="inline-block align-top w-44 mr-3 bg-white border border-gray-200 rounded-xl shadow-sm p-3">
-                        <a href="https://amzn.to/3KE2EM6" target="_blank" rel="noopener noreferrer">
-                            <img src="https://m.media-amazon.com/images/I/61Rq9jFzI4L._SL1414_.jpg"
-                                class="h-36 w-auto mx-auto object-contain rounded mb-2">
-                            <span class="text-sm font-medium block mb-1">Ecos 3</span>
-                        </a>
+                    <div>
+                        <label class="block text-xs uppercase tracking-wider text-gray-500 mb-2 font-medium">
+                            Ville
+                        </label>
+                        <select id="ville" class="glass-input w-full px-4 py-3 rounded-lg">
+                            <option value="">Toutes</option>
+                        </select>
                     </div>
 
-                    <div
-                        class="inline-block align-top w-44 mr-3 bg-white border border-gray-200 rounded-xl shadow-sm p-3">
-                        <a href="https://amzn.to/48kkSvl" target="_blank" rel="noopener noreferrer">
-                            <img src="https://m.media-amazon.com/images/I/61wd2gwr49L._SL1414_.jpg"
-                                class="h-36 w-auto mx-auto object-contain rounded mb-2">
-                            <span class="text-sm font-medium block mb-1">Ecos 1</span>
-                        </a>
+                    <div>
+                        <label class="block text-xs uppercase tracking-wider text-gray-500 mb-2 font-medium">
+                            Votre rang
+                        </label>
+                        <input type="number" id="userRank" placeholder="1500" min="1" max="15000" required
+                            class="glass-input w-full px-4 py-3 rounded-lg" />
                     </div>
 
-                    <div
-                        class="inline-block align-top w-44 mr-3 bg-white border border-gray-200 rounded-xl shadow-sm p-3">
-                        <a href="https://amzn.to/4plK0rN" target="_blank" rel="noopener noreferrer">
-                            <img src="https://m.media-amazon.com/images/I/61eD3Cx5QyL._SL1414_.jpg"
-                                class="h-36 w-auto mx-auto object-contain rounded mb-2">
-                            <span class="text-sm font-medium block mb-1">Ecos 2</span>
-                        </a>
+                    <div>
+                        <label class="block text-xs uppercase tracking-wider text-gray-500 mb-2 font-medium">
+                            Total élèves dans votre promo
+                        </label>
+                        <input type="number" id="totalCandidatesCurrent" placeholder="11800" min="1000" max="15000"
+                            class="glass-input w-full px-4 py-3 rounded-lg" />
                     </div>
-
-                    <div
-                        class="inline-block align-top w-44 mr-3 bg-white border border-gray-200 rounded-xl shadow-sm p-3">
-                        <a href="https://amzn.to/48zNzU1" target="_blank" rel="noopener noreferrer">
-                            <img src="https://m.media-amazon.com/images/I/71Dz2KFf5kL._SL1500_.jpg"
-                                class="h-36 w-auto mx-auto object-contain rounded mb-2">
-                            <span class="text-sm font-medium block mb-1">Ecos 1bis</span>
-                        </a>
-                    </div>
-
                 </div>
-            </div>
 
-            <style>
-                .book-carousel {
-                    scroll-snap-type: x mandatory;
-                }
-
-                .book-carousel>div {
-                    scroll-snap-align: start;
-                }
-            </style>
-
-            <!-- Formulaire -->
-            <div class="bg-white border border-gray-200 rounded-2xl p-8 mb-12 shadow-sm">
-                <form id="analysisForm" class="space-y-6">
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        <div>
-                            <label class="block text-xs uppercase tracking-wider text-gray-500 mb-2 font-medium">
-                                Spécialité
-                            </label>
-                            <select id="specialite" required class="glass-input w-full px-4 py-3 rounded-lg">
-                                <option value="">Sélectionner</option>
-                            </select>
-                        </div>
-
-                        <div>
-                            <label class="block text-xs uppercase tracking-wider text-gray-500 mb-2 font-medium">
-                                Ville
-                            </label>
-                            <select id="ville" class="glass-input w-full px-4 py-3 rounded-lg">
-                                <option value="">Toutes</option>
-                            </select>
-                        </div>
-
-                        <div>
-                            <label class="block text-xs uppercase tracking-wider text-gray-500 mb-2 font-medium">
-                                Votre rang
-                            </label>
-                            <input type="number" id="userRank" placeholder="1500" min="1" max="15000" required
-                                class="glass-input w-full px-4 py-3 rounded-lg" />
-                        </div>
-
-                        <div>
-                            <label class="block text-xs uppercase tracking-wider text-gray-500 mb-2 font-medium">
-                                Total élèves dans votre promo
-                            </label>
-                            <input type="number" id="totalCandidatesCurrent" placeholder="11800" min="1000" max="15000"
-                                class="glass-input w-full px-4 py-3 rounded-lg" />
-                        </div>
-                    </div>
-
-                    <div
-                        class="flex flex-col md:flex-row items-start md:items-center justify-between pt-4 border-t gap-4">
-                        <div class="flex flex-col md:flex-row items-start md:items-center gap-4 w-full md:w-auto">
-                            <span class="text-xs uppercase tracking-wider text-gray-500 font-medium">Mode</span>
-                            <div class="flex gap-2">
-                                <button type="button" data-mode="0"
-                                    class="mode-btn px-4 py-2 text-sm rounded-lg border border-gray-200 hover:border-black transition">
-                                    Brute
-                                </button>
-                                <button type="button" data-mode="1"
-                                    class="mode-btn px-4 py-2 text-sm rounded-lg border border-gray-200 hover:border-black transition">
-                                    Sans CESP
-                                </button>
-                                <button type="button" data-mode="2"
-                                    class="mode-btn px-4 py-2 text-sm rounded-lg border border-gray-200 hover:border-black transition">
-                                    Ajusté
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="flex gap-4 w-full md:w-auto">
-                            <button type="submit"
-                                class="flex-1 md:flex-none bg-black hover:bg-gray-800 text-white px-8 py-3 rounded-lg font-medium transition">
-                                Analyser
+                <div class="flex flex-col md:flex-row items-start md:items-center justify-between pt-4 border-t gap-4">
+                    <div class="flex flex-col md:flex-row items-start md:items-center gap-4 w-full md:w-auto">
+                        <span class="text-xs uppercase tracking-wider text-gray-500 font-medium">Mode</span>
+                        <div class="flex gap-2">
+                            <button type="button" data-mode="0"
+                                class="mode-btn px-4 py-2 text-sm rounded-lg border border-gray-200 hover:border-black transition">
+                                Brute
                             </button>
-                            <button type="button" onclick="window.open('methods.html', '_blank')"
-                                class="text-sm text-gray-600 hover:text-black transition underline">
-                                Méthodologie
+                            <button type="button" data-mode="1"
+                                class="mode-btn px-4 py-2 text-sm rounded-lg border border-gray-200 hover:border-black transition">
+                                Sans CESP
+                            </button>
+                            <button type="button" data-mode="2"
+                                class="mode-btn px-4 py-2 text-sm rounded-lg border border-gray-200 hover:border-black transition">
+                                Ajusté
                             </button>
                         </div>
                     </div>
-                </form>
-            </div>
 
-            <!-- Loading -->
-            <div id="loading" class="hidden text-center py-12">
-                <div class="inline-block h-8 w-8 border-2 border-gray-300 border-t-black rounded-full animate-spin">
-                </div>
-            </div>
-
-            <!-- Error -->
-            <div id="error" class="hidden bg-red-50 border border-red-200 text-red-800 px-6 py-4 rounded-lg mb-6">
-            </div>
-
-            <!-- Résultats -->
-            <div id="results" class="hidden">
-                <!-- Stats Summary (mobile uniquement) -->
-                <div id="statsSummary" class="bg-gray-50 border border-gray-200 rounded-xl p-6 mb-6 md:hidden">
-                    <div class="grid grid-cols-2 gap-4 text-center">
+                    <div class="flex gap-4 w-full md:w-auto">
+                        <button type="submit"
+                            class="flex-1 md:flex-none bg-black hover:bg-gray-800 text-white px-8 py-3 rounded-lg font-medium transition">
+                            Analyser
+                        </button>
+                        <button type="button" onclick="window.open('matrix.html', '_blank')"
+                            class="flex-1 md:flex-none bg-black hover:bg-gray-800 text-white px-8 py-3 rounded-lg font-medium transition">
+                            Matrice Ville*Spé
+                        </button>
+                        <button type="button" onclick="window.open('methods.html', '_blank')"
+                            class="text-sm text-gray-600 hover:text-black transition underline">
+                            Méthodologie
+                        </button>
                     </div>
                 </div>
+            </form>
+        </div>
 
+        <!-- Légende carte -->
+        <div class="flex items-center gap-4 bg-white border border-gray-200 px-4 py-3 rounded-xl shadow-sm mb-2">
 
-                <!-- Carte France -->
-                <div id="chartMapContainer" class="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm mt-6">
-                    <div id="chartMap" style="height: 650px;"></div>
-                </div>
-                <div class="flex gap-8 mb-8 border-b"></div>
-                <!-- Onglets -->
-                <div class="flex gap-8 mb-8 border-b">
-                    <button id="tabEvolution" class="tab-minimal active text-sm font-medium">
-                        Évolution temporelle
-                    </button>
-                    <button id="tabVilles" class="tab-minimal text-sm font-medium hidden md:block">
-                        Par ville
-                    </button>
-                </div>
-                <!-- Graphiques -->
-                <div id="chartContainer" class="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm">
-                    <div id="chart" style="height: 600px;"></div>
-                    <div id="chartVilles" class="hidden" style="height: 600px;"></div>
-                </div>
+            <div class="flex items-center gap-2">
+                <span class="text-xl">✅</span>
+                <span class="text-sm text-gray-700">Au-dessus du dernier appelé</span>
             </div>
+
+            <div class="flex items-center gap-2">
+                <span class="text-xl">⚠️</span>
+                <span class="text-sm text-gray-700">Entre le premier et le dernier appelé</span>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <span class="text-xl">❌</span>
+                <span class="text-sm text-gray-700">Sous le dernier appelé</span>
+            </div>
+
         </div>
         <!-- Carrousel Amazon (caché au départ) -->
-        <div id="amazonCarousel" class="hidden max-w-6xl mx-auto px-6 mt-10 mb-16">
-            <h2 class="text-lg font-semibold mb-2">Livres utiles pour préparer les EDN</h2>
-            <p class="text-gray-500 text-xs mb-4">
-                Sélection courte de livres de préparation. Affiliation Amazon.
-            </p>
-
+        <div id="amazonCarousel" class="max-w-6xl mx-auto px-6 mt-10 mb-6">
+            <h3 class="text-lg font-semibold mb-4">Quelques livres pour réviser</h3>
             <div class="book-carousel overflow-x-auto whitespace-nowrap py-2">
 
-                <div class="inline-block align-top w-52 mr-3 bg-white border border-gray-200 rounded-xl shadow-sm p-3">
+                <div class="inline-block align-top w-44 mr-3 bg-white border border-gray-200 rounded-xl shadow-sm p-3">
                     <a href="https://amzn.to/4rF9qBW" target="_blank" rel="noopener noreferrer">
                         <img src="https://m.media-amazon.com/images/I/61K+2C84x-L._SL1414_.jpg"
-                            class="w-full h-auto rounded mb-2">
-                        <span class="text-sm font-medium block mb-1">Ecos Méthodo</span>
-                        <span class="block text-center bg-black text-white py-1.5 rounded text-xs">
-                            Voir sur Amazon
+                            class="h-36 w-auto mx-auto object-contain rounded mb-2">
+                        <span class="text-sm font-medium block mb-1">Ecos méthodo</span>
                         </span>
                     </a>
                 </div>
 
-                <div class="inline-block align-top w-52 mr-3 bg-white border border-gray-200 rounded-xl shadow-sm p-3">
+                <div class="inline-block align-top w-44 mr-3 bg-white border border-gray-200 rounded-xl shadow-sm p-3">
                     <a href="https://amzn.to/3KE2EM6" target="_blank" rel="noopener noreferrer">
                         <img src="https://m.media-amazon.com/images/I/61Rq9jFzI4L._SL1414_.jpg"
-                            class="w-full h-auto rounded mb-2">
+                            class="h-36 w-auto mx-auto object-contain rounded mb-2">
                         <span class="text-sm font-medium block mb-1">Ecos 3</span>
-                        <span class="block text-center bg-black text-white py-1.5 rounded text-xs">
-                            Voir sur Amazon
-                        </span>
                     </a>
                 </div>
 
-                <div class="inline-block align-top w-52 mr-3 bg-white border border-gray-200 rounded-xl shadow-sm p-3">
+                <div class="inline-block align-top w-44 mr-3 bg-white border border-gray-200 rounded-xl shadow-sm p-3">
                     <a href="https://amzn.to/48kkSvl" target="_blank" rel="noopener noreferrer">
                         <img src="https://m.media-amazon.com/images/I/61wd2gwr49L._SL1414_.jpg"
-                            class="w-full h-auto rounded mb-2">
+                            class="h-36 w-auto mx-auto object-contain rounded mb-2">
                         <span class="text-sm font-medium block mb-1">Ecos 1</span>
-                        <span class="block text-center bg-black text-white py-1.5 rounded text-xs">
-                            Voir sur Amazon
-                        </span>
                     </a>
                 </div>
 
-                <div class="inline-block align-top w-52 mr-3 bg-white border border-gray-200 rounded-xl shadow-sm p-3">
+                <div class="inline-block align-top w-44 mr-3 bg-white border border-gray-200 rounded-xl shadow-sm p-3">
                     <a href="https://amzn.to/4plK0rN" target="_blank" rel="noopener noreferrer">
                         <img src="https://m.media-amazon.com/images/I/61eD3Cx5QyL._SL1414_.jpg"
-                            class="w-full h-auto rounded mb-2">
+                            class="h-36 w-auto mx-auto object-contain rounded mb-2">
                         <span class="text-sm font-medium block mb-1">Ecos 2</span>
-                        <span class="block text-center bg-black text-white py-1.5 rounded text-xs">
-                            Voir sur Amazon
-                        </span>
                     </a>
                 </div>
 
-                <div class="inline-block align-top w-52 mr-3 bg-white border border-gray-200 rounded-xl shadow-sm p-3">
+                <div class="inline-block align-top w-44 mr-3 bg-white border border-gray-200 rounded-xl shadow-sm p-3">
                     <a href="https://amzn.to/48zNzU1" target="_blank" rel="noopener noreferrer">
                         <img src="https://m.media-amazon.com/images/I/71Dz2KFf5kL._SL1500_.jpg"
-                            class="w-full h-auto rounded mb-2">
+                            class="h-36 w-auto mx-auto object-contain rounded mb-2">
                         <span class="text-sm font-medium block mb-1">Ecos 1bis</span>
-                        <span class="block text-center bg-black text-white py-1.5 rounded text-xs">
-                            Voir sur Amazon
-                        </span>
                     </a>
                 </div>
 
@@ -499,643 +294,753 @@
                 scroll-snap-align: start;
             }
         </style>
-        <!-- Footer -->
-        <footer class="text-center text-xs text-gray-500 py-8 border-t mt-16">
-            <p>Les données affichées ont été anonymisées et catégorisées...</p>
-            <p>Ce site génère des revenus à partir des liens affiliés ( faut bien payer le server ) </p>
-            <a href="terms.html">CGU</a>
-            <div class="space-x-4 mt-4">
-                <a href="privacy.html" class="hover:text-black transition">Confidentialité</a>
-                <a href="about.html" class="hover:text-black transition">À propos</a>
-                <a href="legal.html" class="hover:text-black transition">Mentions légales</a>
+        <!-- Loading -->
+        <div id="loading" class="hidden text-center py-12">
+            <div class="inline-block h-8 w-8 border-2 border-gray-300 border-t-black rounded-full animate-spin">
             </div>
-        </footer>
+        </div>
+
+        <!-- Error -->
+        <div id="error" class="hidden bg-red-50 border border-red-200 text-red-800 px-6 py-4 rounded-lg mb-6">
+        </div>
+
+        <!-- Résultats -->
+        <div id="results" class="hidden">
+            <!-- Stats Summary (mobile uniquement) -->
+            <div id="statsSummary" class="bg-gray-50 border border-gray-200 rounded-xl p-6 mb-6 md:hidden">
+                <div class="grid grid-cols-2 gap-4 text-center">
+                </div>
+            </div>
+
+
+            <!-- Carte France -->
+            <div id="chartMapContainer" class="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm mt-6">
+                <div id="chartMap" style="height: 650px;"></div>
+            </div>
+            <div class="flex gap-8 mb-8 border-b"></div>
+            <!-- Onglets -->
+            <div class="flex gap-8 mb-8 border-b">
+                <button id="tabEvolution" class="tab-minimal active text-sm font-medium">
+                    Évolution temporelle
+                </button>
+                <button id="tabVilles" class="tab-minimal text-sm font-medium hidden md:block">
+                    Par ville
+                </button>
+            </div>
+            <!-- Graphiques -->
+            <div id="chartContainer" class="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm">
+                <div id="chart" style="height: 600px;"></div>
+                <div id="chartVilles" class="hidden" style="height: 600px;"></div>
+            </div>
+        </div>
+    </div>
+    <!-- Carrousel Amazon (caché au départ) -->
+    <div id="amazonCarousel" class="hidden max-w-6xl mx-auto px-6 mt-10 mb-16">
+        <h2 class="text-lg font-semibold mb-2">Livres utiles pour préparer les EDN</h2>
+        <p class="text-gray-500 text-xs mb-4">
+            Sélection courte de livres de préparation. Affiliation Amazon.
+        </p>
+
+        <div class="book-carousel overflow-x-auto whitespace-nowrap py-2">
+
+            <div class="inline-block align-top w-52 mr-3 bg-white border border-gray-200 rounded-xl shadow-sm p-3">
+                <a href="https://amzn.to/4rF9qBW" target="_blank" rel="noopener noreferrer">
+                    <img src="https://m.media-amazon.com/images/I/61K+2C84x-L._SL1414_.jpg"
+                        class="w-full h-auto rounded mb-2">
+                    <span class="text-sm font-medium block mb-1">Ecos Méthodo</span>
+                    <span class="block text-center bg-black text-white py-1.5 rounded text-xs">
+                        Voir sur Amazon
+                    </span>
+                </a>
+            </div>
+
+            <div class="inline-block align-top w-52 mr-3 bg-white border border-gray-200 rounded-xl shadow-sm p-3">
+                <a href="https://amzn.to/3KE2EM6" target="_blank" rel="noopener noreferrer">
+                    <img src="https://m.media-amazon.com/images/I/61Rq9jFzI4L._SL1414_.jpg"
+                        class="w-full h-auto rounded mb-2">
+                    <span class="text-sm font-medium block mb-1">Ecos 3</span>
+                    <span class="block text-center bg-black text-white py-1.5 rounded text-xs">
+                        Voir sur Amazon
+                    </span>
+                </a>
+            </div>
+
+            <div class="inline-block align-top w-52 mr-3 bg-white border border-gray-200 rounded-xl shadow-sm p-3">
+                <a href="https://amzn.to/48kkSvl" target="_blank" rel="noopener noreferrer">
+                    <img src="https://m.media-amazon.com/images/I/61wd2gwr49L._SL1414_.jpg"
+                        class="w-full h-auto rounded mb-2">
+                    <span class="text-sm font-medium block mb-1">Ecos 1</span>
+                    <span class="block text-center bg-black text-white py-1.5 rounded text-xs">
+                        Voir sur Amazon
+                    </span>
+                </a>
+            </div>
+
+            <div class="inline-block align-top w-52 mr-3 bg-white border border-gray-200 rounded-xl shadow-sm p-3">
+                <a href="https://amzn.to/4plK0rN" target="_blank" rel="noopener noreferrer">
+                    <img src="https://m.media-amazon.com/images/I/61eD3Cx5QyL._SL1414_.jpg"
+                        class="w-full h-auto rounded mb-2">
+                    <span class="text-sm font-medium block mb-1">Ecos 2</span>
+                    <span class="block text-center bg-black text-white py-1.5 rounded text-xs">
+                        Voir sur Amazon
+                    </span>
+                </a>
+            </div>
+
+            <div class="inline-block align-top w-52 mr-3 bg-white border border-gray-200 rounded-xl shadow-sm p-3">
+                <a href="https://amzn.to/48zNzU1" target="_blank" rel="noopener noreferrer">
+                    <img src="https://m.media-amazon.com/images/I/71Dz2KFf5kL._SL1500_.jpg"
+                        class="w-full h-auto rounded mb-2">
+                    <span class="text-sm font-medium block mb-1">Ecos 1bis</span>
+                    <span class="block text-center bg-black text-white py-1.5 rounded text-xs">
+                        Voir sur Amazon
+                    </span>
+                </a>
+            </div>
+
+        </div>
     </div>
 
-    <script>
-        // Animation intro
-        setTimeout(() => {
-            document.querySelectorAll('.flow-item').forEach(item => {
-                item.classList.add('show');
+    <style>
+        .book-carousel {
+            scroll-snap-type: x mandatory;
+        }
+
+        .book-carousel>div {
+            scroll-snap-align: start;
+        }
+    </style>
+    <!-- Footer -->
+    <footer class="text-center text-xs text-gray-500 py-8 border-t mt-16">
+        <p>Les données affichées ont été anonymisées et catégorisées...</p>
+        <p>Ce site génère des revenus à partir des liens affiliés ( faut bien payer le server ) </p>
+        <a href="terms.html">CGU</a>
+        <div class="space-x-4 mt-4">
+            <a href="privacy.html" class="hover:text-black transition">Confidentialité</a>
+            <a href="about.html" class="hover:text-black transition">À propos</a>
+            <a href="legal.html" class="hover:text-black transition">Mentions légales</a>
+        </div>
+    </footer>
+</div>
+
+<script>
+
+    let specialitesData = [], villesData = [];
+    let currentMode = 'brute';
+    const modes = ['brute', 'sans cesp', 'ajuste'];
+    let isMobile = window.innerWidth <= 768;
+
+    window.addEventListener('resize', () => {
+        isMobile = window.innerWidth <= 768;
+    });
+
+    // Mode buttons
+    document.querySelectorAll('.mode-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.mode-btn').forEach(b => {
+                b.classList.remove('bg-black', 'text-white', 'border-black');
+                b.classList.add('border-gray-200');
             });
-        }, 100);
-
-        let specialitesData = [], villesData = [];
-        let currentMode = 'brute';
-        const modes = ['brute', 'sans cesp', 'ajuste'];
-        let isMobile = window.innerWidth <= 768;
-
-        window.addEventListener('resize', () => {
-            isMobile = window.innerWidth <= 768;
+            btn.classList.remove('border-gray-200');
+            btn.classList.add('bg-black', 'text-white', 'border-black');
+            currentMode = modes[parseInt(btn.dataset.mode)];
         });
+    });
 
-        // Mode buttons
-        document.querySelectorAll('.mode-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.mode-btn').forEach(b => {
-                    b.classList.remove('bg-black', 'text-white', 'border-black');
-                    b.classList.add('border-gray-200');
-                });
-                btn.classList.remove('border-gray-200');
-                btn.classList.add('bg-black', 'text-white', 'border-black');
-                currentMode = modes[parseInt(btn.dataset.mode)];
-            });
-        });
+    document.querySelector('.mode-btn[data-mode="0"]').classList.add('bg-black', 'text-white', 'border-black');
+    function wrapTitle(text) {
+        if (window.innerWidth > 480) return text;
+        return text.replace(/(.{18})/g, '$1\n');  // coupe tous les 18 chars
+    }
+    async function loadInitialData() {
+        try {
+            const response = await fetch('/api/specialites');
+            const data = await response.json();
+            specialitesData = data.specialites.sort();
+            villesData = data.villes.sort();
 
-        document.querySelector('.mode-btn[data-mode="0"]').classList.add('bg-black', 'text-white', 'border-black');
-        function wrapTitle(text) {
-            if (window.innerWidth > 480) return text;
-            return text.replace(/(.{18})/g, '$1\n');  // coupe tous les 18 chars
+            const specialiteSelect = document.getElementById('specialite');
+            const villeSelect = document.getElementById('ville');
+
+            specialitesData.forEach(s => specialiteSelect.appendChild(new Option(s, s)));
+            villesData.forEach(v => villeSelect.appendChild(new Option(v, v)));
+        } catch (error) {
+            console.error('Erreur:', error);
         }
-        async function loadInitialData() {
-            try {
-                const response = await fetch('/api/specialites');
-                const data = await response.json();
-                specialitesData = data.specialites.sort();
-                villesData = data.villes.sort();
+    }
 
-                const specialiteSelect = document.getElementById('specialite');
-                const villeSelect = document.getElementById('ville');
+    document.getElementById('analysisForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const specialite = document.getElementById('specialite').value;
+        const ville = document.getElementById('ville').value;
+        const userRank = parseInt(document.getElementById('userRank').value);
 
-                specialitesData.forEach(s => specialiteSelect.appendChild(new Option(s, s)));
-                villesData.forEach(v => villeSelect.appendChild(new Option(v, v)));
-            } catch (error) {
-                console.error('Erreur:', error);
-            }
+        if (!specialite) {
+            showError('Veuillez sélectionner une spécialité.');
+            return;
         }
+        await analyzeData(specialite, ville, userRank);
+    });
 
-        document.getElementById('analysisForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const specialite = document.getElementById('specialite').value;
-            const ville = document.getElementById('ville').value;
-            const userRank = parseInt(document.getElementById('userRank').value);
+    async function analyzeData(specialite, ville, userRank) {
+        showLoading(true);
+        hideError();
 
-            if (!specialite) {
-                showError('Veuillez sélectionner une spécialité.');
-                return;
-            }
-            await analyzeData(specialite, ville, userRank);
-        });
-
-        async function analyzeData(specialite, ville, userRank) {
-            showLoading(true);
-            hideError();
-
-            try {
-                const years = [2019, 2020, 2021, 2022, 2023, 2024, 2025];
-                const totalCandidates = { 2019: 8308, 2020: 8424, 2021: 8579, 2022: 8854, 2023: 9312, 2024: 7817, 2025: 8957 };
-                const allData = [];
-
-                for (const year of years) {
-                    let endpoint = `/api/stats/${encodeURIComponent(specialite)}?annee=${year}`;
-                    if (ville) endpoint += `&ville=${encodeURIComponent(ville)}`;
-                    endpoint += `&mode=${encodeURIComponent(currentMode)}`;
-
-                    const response = await fetch(endpoint);
-                    if (response.ok) {
-                        const data = await response.json();
-                        allData.push({
-                            year,
-                            rang_min: data.rang_min || 1,
-                            rang_max: data.rang_max || totalCandidates[year],
-                            rang_median: data.rang_median
-                        });
-                    }
-                }
-
-                if (allData.length === 0) throw new Error('Aucune donnée trouvée');
-
-                const totalStudentCurrent = document.getElementById('totalCandidatesCurrent').value;
-                const currentTotal = totalStudentCurrent ? parseInt(totalStudentCurrent) : 11800;
-
-                showStatsSummary(allData, userRank, currentTotal);
-                document.getElementById('results').classList.remove('hidden');
-                document.getElementById('amazonCarousel').classList.remove('hidden');
-
-                await new Promise(resolve => setTimeout(resolve, 500));
-
-                if (isMobile) {
-                    createMobilePlot(allData, userRank, specialite + (ville ? ` - ${ville}` : ''), currentTotal);
-                } else {
-                    createEChart(allData, userRank, specialite + (ville ? ` - ${ville}` : ''), currentTotal);
-                    await createBarPlot(specialite, ville, userRank, currentTotal);
-                }
-                await createMapChart(specialite, ville, userRank, currentTotal);
-
-            } catch (error) {
-                showError('Erreur: ' + error.message);
-            } finally {
-                showLoading(false);
-            }
-        }
-        async function createMapChart(specialite, selectedVille, userRank, currentTotal) {
-
-            // --- Coordonnées principales + DOM-TOM placés en haut à gauche ---
-            const cityCoordinates = {
-                "POITIERS": [0.3404, 46.5802],
-                "SAINT-ÉTIENNE": [4.3903, 45.4397],
-                "LIMOGES": [1.2611, 45.8336],
-                "BORDEAUX": [-0.5792, 44.8378],
-                "LYON": [4.8357, 45.7640],
-                "ROUEN": [1.0993, 49.4431],
-                "ANGERS": [-0.5632, 47.4784],
-                "STRASBOURG": [7.7521, 48.5734],
-                "DIJON": [5.0415, 47.3220],
-                "NANCY": [6.1844, 48.6921],
-                "LA RÉUNION": [-5, 50],        // 👈 FAUSSE POSITION DOM-TOM
-                "CAEN": [-0.3707, 49.1829],
-                "LILLE": [3.0573, 50.6292],
-                "MARSEILLE": [5.3698, 43.2965],
-                "RENNES": [-1.6778, 48.1173],
-                "GUADELOUPE": [-5, 51],        // 👈 FAUSSE POSITION DOM-TOM
-                "AMIENS": [2.2957, 49.8954],
-                "MONTPELLIER": [3.8767, 43.6108],
-                "GRENOBLE": [5.7245, 45.1885],
-                "CLERMONT-FERRAND": [3.0870, 45.7786],
-                "BREST": [-4.4871, 48.3904],
-                "NANTES": [-1.5534, 47.2184],
-                "TOULOUSE": [1.4442, 43.6047],
-                "PARIS": [2.3522, 48.8566],
-                "NICE": [7.2619, 43.7102],
-                "REIMS": [4.0317, 49.2583],
-                "TOURS": [0.6848, 47.3941],
-                "BESANÇON": [6.0256, 47.2378]
-            };
-
-            const villes = Object.keys(cityCoordinates);
-            const total2025 = 8957; // diviseur officiel (NE PAS TOUCHER)
-            const points = [];
-
-            // --- Appel unique à l'endpoint bulk ---
-            const resp = await fetch(`/api/stats_bulk/${specialite}?annee=2025&mode=${currentMode}`);
-            if (!resp.ok) {
-                console.error("Erreur bulk endpoint");
-                return;
-            }
-            const bulk = await resp.json();
-
-            // --- Conversion des données bulk en points pour la carte ---
-            for (const entry of bulk.villes) {
-                const ville = entry.ville.toUpperCase();
-                const coords = cityCoordinates[ville];
-                if (!coords) continue;
-
-                const minN = Math.round((entry.rang_min / 8957) * currentTotal);
-                const maxN = Math.round((entry.rang_max / 8957) * currentTotal);
-
-                let emoji = "📍";
-                if (userRank <= minN) emoji = "✅";
-                else if (userRank <= maxN) emoji = "⚠️";
-                else emoji = "❌";
-
-                points.push({
-                    name: ville,
-                    value: [...coords, minN, maxN],
-                    rang_min: minN,
-                    rang_max: maxN,
-                    status: emoji
-                });
-            }
-            // --- Reset instance ECharts ---
-            const dom = document.getElementById("chartMap");
-            const prev = echarts.getInstanceByDom(dom);
-            if (prev) prev.dispose();
-
-            const chart = echarts.init(dom);
-
-            // --- Import GeoJSON France ---
-            const geo = await (await fetch(
-                "https://raw.githubusercontent.com/gregoiredavid/france-geojson/master/regions.geojson"
-            )).json();
-
-            echarts.registerMap("france", geo);
-
-            // --- Configuration finale ---
-            chart.setOption({
-                title: {
-                    text: wrapTitle(`Carte des villes – ${specialite} ( basé sur 2025 )`),
-                    subtext: `Normalisé sur ${currentTotal} élèves – 2025 uniquement`,
-                    left: "center",
-                    top: 15,
-                    textStyle: {
-                        fontSize: window.innerWidth < 480 ? 13 : 18,   // plus petit sur mobile
-                        lineHeight: 18,
-                        width: window.innerWidth < 480 ? 180 : null    // force un wrap
-                    },
-                    subtextStyle: {
-                        fontSize: window.innerWidth < 480 ? 10 : 12,
-                        color: "#666"
-                    }
-                },
-
-                tooltip: {
-                    formatter: p =>
-                        p.data
-                            ? `<b>${p.data.status} ${p.name}</b><br>Min : ${p.data.rang_min}<br>Max : ${p.data.rang_max}`
-                            : p.name
-                },
-
-                geo: {
-                    map: "france",
-                    roam: true,
-                    zoom: 1.15,
-                    center: [2.2, 46.5],
-                    itemStyle: {
-                        areaColor: "#eee",
-                        borderColor: "#aaa"
-                    },
-                    emphasis: {
-                        disabled: true
-                    }
-                },
-
-                series: [{
-                    type: "scatter",
-                    coordinateSystem: "geo",
-                    data: points,
-                    symbolSize: 32,
-                    label: {
-                        show: true,
-                        formatter: d => d.data.status,
-                        fontSize: 22
-                    },
-                    itemStyle: { color: "transparent" }
-                }]
-            });
-
-            window.addEventListener("resize", () => chart.resize());
-        }
-        // VERSION MOBILE avec Plotly
-        function createMobilePlot(allData, userRank, title, currentTotal) {
+        try {
+            const years = [2019, 2020, 2021, 2022, 2023, 2024, 2025];
             const totalCandidates = { 2019: 8308, 2020: 8424, 2021: 8579, 2022: 8854, 2023: 9312, 2024: 7817, 2025: 8957 };
+            const allData = [];
 
-            const normalizedData = allData.map(d => ({
-                year: d.year,
-                rang_min_normalized: Math.round((d.rang_min / totalCandidates[d.year]) * currentTotal),
-                rang_max_normalized: Math.round((d.rang_max / totalCandidates[d.year]) * currentTotal),
-                rang_min_original: d.rang_min,
-                rang_max_original: d.rang_max,
-                total_year: totalCandidates[d.year]
-            }));
+            for (const year of years) {
+                let endpoint = `/api/stats/${encodeURIComponent(specialite)}?annee=${year}`;
+                if (ville) endpoint += `&ville=${encodeURIComponent(ville)}`;
+                endpoint += `&mode=${encodeURIComponent(currentMode)}`;
 
-            const minTrace = {
+                const response = await fetch(endpoint);
+                if (response.ok) {
+                    const data = await response.json();
+                    allData.push({
+                        year,
+                        rang_min: data.rang_min || 1,
+                        rang_max: data.rang_max || totalCandidates[year],
+                        rang_median: data.rang_median
+                    });
+                }
+            }
+
+            if (allData.length === 0) throw new Error('Aucune donnée trouvée');
+
+            const totalStudentCurrent = document.getElementById('totalCandidatesCurrent').value;
+            const currentTotal = totalStudentCurrent ? parseInt(totalStudentCurrent) : 11800;
+
+            showStatsSummary(allData, userRank, currentTotal);
+            document.getElementById('results').classList.remove('hidden');
+            document.getElementById('amazonCarousel').classList.remove('hidden');
+
+            await new Promise(resolve => setTimeout(resolve, 500));
+
+            if (isMobile) {
+                createMobilePlot(allData, userRank, specialite + (ville ? ` - ${ville}` : ''), currentTotal);
+            } else {
+                createEChart(allData, userRank, specialite + (ville ? ` - ${ville}` : ''), currentTotal);
+                await createBarPlot(specialite, ville, userRank, currentTotal);
+            }
+            await createMapChart(specialite, ville, userRank, currentTotal);
+
+        } catch (error) {
+            showError('Erreur: ' + error.message);
+        } finally {
+            showLoading(false);
+        }
+    }
+    async function createMapChart(specialite, selectedVille, userRank, currentTotal) {
+
+        // --- Coordonnées principales + DOM-TOM placés en haut à gauche ---
+        const cityCoordinates = {
+            "POITIERS": [0.3404, 46.5802],
+            "SAINT-ÉTIENNE": [4.3903, 45.4397],
+            "LIMOGES": [1.2611, 45.8336],
+            "BORDEAUX": [-0.5792, 44.8378],
+            "LYON": [4.8357, 45.7640],
+            "ROUEN": [1.0993, 49.4431],
+            "ANGERS": [-0.5632, 47.4784],
+            "STRASBOURG": [7.7521, 48.5734],
+            "DIJON": [5.0415, 47.3220],
+            "NANCY": [6.1844, 48.6921],
+            "LA RÉUNION": [-5, 50],        // 👈 FAUSSE POSITION DOM-TOM
+            "CAEN": [-0.3707, 49.1829],
+            "LILLE": [3.0573, 50.6292],
+            "MARSEILLE": [5.3698, 43.2965],
+            "RENNES": [-1.6778, 48.1173],
+            "GUADELOUPE": [-5, 51],        // 👈 FAUSSE POSITION DOM-TOM
+            "AMIENS": [2.2957, 49.8954],
+            "MONTPELLIER": [3.8767, 43.6108],
+            "GRENOBLE": [5.7245, 45.1885],
+            "CLERMONT-FERRAND": [3.0870, 45.7786],
+            "BREST": [-4.4871, 48.3904],
+            "NANTES": [-1.5534, 47.2184],
+            "TOULOUSE": [1.4442, 43.6047],
+            "PARIS": [2.3522, 48.8566],
+            "NICE": [7.2619, 43.7102],
+            "REIMS": [4.0317, 49.2583],
+            "TOURS": [0.6848, 47.3941],
+            "BESANÇON": [6.0256, 47.2378]
+        };
+
+        const villes = Object.keys(cityCoordinates);
+        const total2025 = 8957; // diviseur officiel (NE PAS TOUCHER)
+        const points = [];
+
+        // --- Appel unique à l'endpoint bulk ---
+        const resp = await fetch(`/api/stats_bulk/${specialite}?annee=2025&mode=${currentMode}`);
+        if (!resp.ok) {
+            console.error("Erreur bulk endpoint");
+            return;
+        }
+        const bulk = await resp.json();
+
+        // --- Conversion des données bulk en points pour la carte ---
+        for (const entry of bulk.villes) {
+            const ville = entry.ville.toUpperCase();
+            const coords = cityCoordinates[ville];
+            if (!coords) continue;
+
+            const minN = Math.round((entry.rang_min / 8957) * currentTotal);
+            const maxN = Math.round((entry.rang_max / 8957) * currentTotal);
+
+            let emoji = "📍";
+            if (userRank <= minN) emoji = "✅";
+            else if (userRank <= maxN) emoji = "⚠️";
+            else emoji = "❌";
+
+            points.push({
+                name: ville,
+                value: [...coords, minN, maxN],
+                rang_min: minN,
+                rang_max: maxN,
+                status: emoji
+            });
+        }
+        // --- Reset instance ECharts ---
+        const dom = document.getElementById("chartMap");
+        const prev = echarts.getInstanceByDom(dom);
+        if (prev) prev.dispose();
+
+        const chart = echarts.init(dom);
+
+        // --- Import GeoJSON France ---
+        const geo = await (await fetch(
+            "https://raw.githubusercontent.com/gregoiredavid/france-geojson/master/regions.geojson"
+        )).json();
+
+        echarts.registerMap("france", geo);
+
+        // --- Configuration finale ---
+        chart.setOption({
+            title: {
+                text: wrapTitle(`Carte des villes – ${specialite} ( basé sur 2025 )`),
+                subtext: `Normalisé sur ${currentTotal} élèves – 2025 uniquement`,
+                left: "center",
+                top: 15,
+                textStyle: {
+                    fontSize: window.innerWidth < 480 ? 13 : 18,   // plus petit sur mobile
+                    lineHeight: 18,
+                    width: window.innerWidth < 480 ? 180 : null    // force un wrap
+                },
+                subtextStyle: {
+                    fontSize: window.innerWidth < 480 ? 10 : 12,
+                    color: "#666"
+                }
+            },
+
+            tooltip: {
+                formatter: p =>
+                    p.data
+                        ? `<b>${p.data.status} ${p.name}</b><br>Min : ${p.data.rang_min}<br>Max : ${p.data.rang_max}`
+                        : p.name
+            },
+
+            geo: {
+                map: "france",
+                roam: true,
+                zoom: 1.15,
+                center: [2.2, 46.5],
+                itemStyle: {
+                    areaColor: "#eee",
+                    borderColor: "#aaa"
+                },
+                emphasis: {
+                    disabled: true
+                }
+            },
+
+            series: [{
+                type: "scatter",
+                coordinateSystem: "geo",
+                data: points,
+                symbolSize: 32,
+                label: {
+                    show: true,
+                    formatter: d => d.data.status,
+                    fontSize: 22
+                },
+                itemStyle: { color: "transparent" }
+            }]
+        });
+
+        window.addEventListener("resize", () => chart.resize());
+    }
+    // VERSION MOBILE avec Plotly
+    function createMobilePlot(allData, userRank, title, currentTotal) {
+        const totalCandidates = { 2019: 8308, 2020: 8424, 2021: 8579, 2022: 8854, 2023: 9312, 2024: 7817, 2025: 8957 };
+
+        const normalizedData = allData.map(d => ({
+            year: d.year,
+            rang_min_normalized: Math.round((d.rang_min / totalCandidates[d.year]) * currentTotal),
+            rang_max_normalized: Math.round((d.rang_max / totalCandidates[d.year]) * currentTotal),
+            rang_min_original: d.rang_min,
+            rang_max_original: d.rang_max,
+            total_year: totalCandidates[d.year]
+        }));
+
+        const minTrace = {
+            x: normalizedData.map(d => d.year),
+            y: normalizedData.map(d => d.rang_min_normalized),
+            type: 'scatter',
+            mode: 'lines+markers',
+            name: 'Rang Min',
+            line: { color: '#000', width: 3 },
+            marker: { size: 8 },
+            hovertemplate: '%{x}: Rang %{y}<br>Original: %{customdata.original}/%{customdata.total}<extra></extra>',
+            customdata: normalizedData.map(d => ({
+                original: d.rang_min_original,
+                total: d.total_year
+            }))
+        };
+
+        const maxTrace = {
+            x: normalizedData.map(d => d.year),
+            y: normalizedData.map(d => d.rang_max_normalized),
+            type: 'scatter',
+            mode: 'lines+markers',
+            name: 'Rang Max',
+            line: { color: '#666', width: 3 },
+            marker: { size: 8 },
+            hovertemplate: '%{x}: Rang %{y}<br>Original: %{customdata.original}/%{customdata.total}<extra></extra>',
+            customdata: normalizedData.map(d => ({
+                original: d.rang_max_original,
+                total: d.total_year
+            }))
+        };
+
+        const fillTrace = {
+            x: [...normalizedData.map(d => d.year), ...normalizedData.map(d => d.year).reverse()],
+            y: [...normalizedData.map(d => d.rang_min_normalized), ...normalizedData.map(d => d.rang_max_normalized).reverse()],
+            type: 'scatter',
+            mode: 'lines',
+            fill: 'toself',
+            fillcolor: 'rgba(0, 0, 0, 0.05)',
+            line: { color: 'transparent' },
+            name: 'Zone accessible',
+            showlegend: false,
+            hoverinfo: 'skip'
+        };
+
+        const traces = [fillTrace, minTrace, maxTrace];
+
+        if (userRank > 0) {
+            traces.push({
                 x: normalizedData.map(d => d.year),
-                y: normalizedData.map(d => d.rang_min_normalized),
-                type: 'scatter',
-                mode: 'lines+markers',
-                name: 'Rang Min',
-                line: { color: '#000', width: 3 },
-                marker: { size: 8 },
-                hovertemplate: '%{x}: Rang %{y}<br>Original: %{customdata.original}/%{customdata.total}<extra></extra>',
-                customdata: normalizedData.map(d => ({
-                    original: d.rang_min_original,
-                    total: d.total_year
-                }))
-            };
-
-            const maxTrace = {
-                x: normalizedData.map(d => d.year),
-                y: normalizedData.map(d => d.rang_max_normalized),
-                type: 'scatter',
-                mode: 'lines+markers',
-                name: 'Rang Max',
-                line: { color: '#666', width: 3 },
-                marker: { size: 8 },
-                hovertemplate: '%{x}: Rang %{y}<br>Original: %{customdata.original}/%{customdata.total}<extra></extra>',
-                customdata: normalizedData.map(d => ({
-                    original: d.rang_max_original,
-                    total: d.total_year
-                }))
-            };
-
-            const fillTrace = {
-                x: [...normalizedData.map(d => d.year), ...normalizedData.map(d => d.year).reverse()],
-                y: [...normalizedData.map(d => d.rang_min_normalized), ...normalizedData.map(d => d.rang_max_normalized).reverse()],
+                y: Array(normalizedData.length).fill(userRank),
                 type: 'scatter',
                 mode: 'lines',
-                fill: 'toself',
-                fillcolor: 'rgba(0, 0, 0, 0.05)',
-                line: { color: 'transparent' },
-                name: 'Zone accessible',
-                showlegend: false,
-                hoverinfo: 'skip'
-            };
-
-            const traces = [fillTrace, minTrace, maxTrace];
-
-            if (userRank > 0) {
-                traces.push({
-                    x: normalizedData.map(d => d.year),
-                    y: Array(normalizedData.length).fill(userRank),
-                    type: 'scatter',
-                    mode: 'lines',
-                    name: `Votre rang: ${userRank}`,
-                    line: { color: '#000', width: 3, dash: 'dash' },
-                    marker: { size: 6 },
-                    hovertemplate: 'Votre rang: %{y}<extra></extra>'
-                });
-            }
-
-            const layout = {
-                title: {
-                    text: title + ` (normalisé /${currentTotal})`,
-                    font: { size: 14, color: '#000' }
-                },
-                yaxis: {
-                    title: `Rang /${currentTotal}`,
-                    autorange: 'reversed',
-                    showgrid: true,
-                    zeroline: false,
-                    gridcolor: '#f5f5f5'
-                },
-                xaxis: {
-                    title: 'Année',
-                    dtick: 1
-                },
-                margin: { l: 50, r: 30, b: 80, t: 80 },
-                showlegend: true,
-                legend: {
-                    orientation: 'h',
-                    x: 0,
-                    y: -0.25,
-                    font: { size: 10 }
-                },
-                hovermode: 'closest',
-                height: 400,
-                plot_bgcolor: 'white',
-                paper_bgcolor: 'white'
-            };
-
-            Plotly.newPlot('chart', traces, layout, {
-                responsive: true,
-                displayModeBar: false
+                name: `Votre rang: ${userRank}`,
+                line: { color: '#000', width: 3, dash: 'dash' },
+                marker: { size: 6 },
+                hovertemplate: 'Votre rang: %{y}<extra></extra>'
             });
         }
 
-        // VERSION DESKTOP avec ECharts
-        function createEChart(allData, userRank, title, currentTotal) {
-            const chartDom = document.getElementById('chart');
-            const container = document.getElementById('chartContainer');
+        const layout = {
+            title: {
+                text: title + ` (normalisé /${currentTotal})`,
+                font: { size: 14, color: '#000' }
+            },
+            yaxis: {
+                title: `Rang /${currentTotal}`,
+                autorange: 'reversed',
+                showgrid: true,
+                zeroline: false,
+                gridcolor: '#f5f5f5'
+            },
+            xaxis: {
+                title: 'Année',
+                dtick: 1
+            },
+            margin: { l: 50, r: 30, b: 80, t: 80 },
+            showlegend: true,
+            legend: {
+                orientation: 'h',
+                x: 0,
+                y: -0.25,
+                font: { size: 10 }
+            },
+            hovermode: 'closest',
+            height: 400,
+            plot_bgcolor: 'white',
+            paper_bgcolor: 'white'
+        };
+
+        Plotly.newPlot('chart', traces, layout, {
+            responsive: true,
+            displayModeBar: false
+        });
+    }
+
+    // VERSION DESKTOP avec ECharts
+    function createEChart(allData, userRank, title, currentTotal) {
+        const chartDom = document.getElementById('chart');
+        const container = document.getElementById('chartContainer');
+        const totalCandidates = { 2019: 8308, 2020: 8424, 2021: 8579, 2022: 8854, 2023: 9312, 2024: 7817, 2025: 8957 };
+
+        const existingChart = echarts.getInstanceByDom(chartDom);
+        if (existingChart) existingChart.dispose();
+
+        const width = container.clientWidth;
+        const myChart = echarts.init(chartDom, null, { width: width, height: 600 });
+
+        const years = allData.map(d => d.year);
+        const minData = allData.map(d => Math.round((d.rang_min / totalCandidates[d.year]) * currentTotal));
+        const maxData = allData.map(d => Math.round((d.rang_max / totalCandidates[d.year]) * currentTotal));
+
+        const option = {
+            title: {
+                text: title,
+                left: 'center',
+                top: 20,
+                textStyle: { fontSize: 18, fontWeight: '500', color: '#000' }
+            },
+            tooltip: {
+                trigger: 'axis',
+                backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                borderColor: '#e5e5e5',
+                borderWidth: 1,
+                textStyle: { color: '#000', fontSize: 13 }
+            },
+            legend: {
+                data: ['Rang Min', 'Rang Max', userRank ? 'Votre rang' : null].filter(Boolean),
+                bottom: 20,
+                textStyle: { color: '#666', fontSize: 13 }
+            },
+            grid: { left: '5%', right: '5%', top: 80, bottom: 80, containLabel: true },
+            xAxis: {
+                type: 'category',
+                data: years,
+                axisLine: { lineStyle: { color: '#e5e5e5' } },
+                axisLabel: { color: '#666', fontSize: 13 }
+            },
+            yAxis: {
+                type: 'value',
+                name: 'Rang',
+                inverse: true,
+                axisLine: { show: false },
+                axisLabel: { color: '#666', fontSize: 13 },
+                splitLine: { lineStyle: { color: '#f5f5f5' } }
+            },
+            series: [
+                {
+                    name: 'Rang Min',
+                    type: 'line',
+                    data: minData,
+                    smooth: true,
+                    symbolSize: 8,
+                    lineStyle: { color: '#000', width: 3 },
+                    itemStyle: { color: '#000', borderWidth: 2, borderColor: '#fff' },
+                    areaStyle: { color: 'rgba(0, 0, 0, 0.08)' }
+                },
+                {
+                    name: 'Rang Max',
+                    type: 'line',
+                    data: maxData,
+                    smooth: true,
+                    symbolSize: 8,
+                    lineStyle: { color: '#666', width: 3 },
+                    itemStyle: { color: '#666', borderWidth: 2, borderColor: '#fff' },
+                    areaStyle: { color: 'rgba(0, 0, 0, 0.04)' }
+                },
+                userRank > 0 ? {
+                    name: 'Votre rang',
+                    type: 'line',
+                    data: Array(years.length).fill(userRank),
+                    symbolSize: 6,
+                    lineStyle: { color: '#000', width: 2, type: [5, 5] },
+                    itemStyle: { color: '#000' }
+                } : null
+            ].filter(Boolean)
+        };
+
+        myChart.setOption(option);
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => myChart.resize());
+        });
+        setTimeout(() => myChart.resize(), 500);
+        window.addEventListener('resize', () => myChart.resize());
+    }
+
+    async function createBarPlot(specialite, selectedVille, userRank, currentTotal) {
+        try {
+            const years = [2019, 2020, 2021, 2022, 2023, 2025];
             const totalCandidates = { 2019: 8308, 2020: 8424, 2021: 8579, 2022: 8854, 2023: 9312, 2024: 7817, 2025: 8957 };
+            const villesToAnalyze = selectedVille ? [selectedVille] : villesData.slice(0, 15);
+
+            // --- Nouveau fetch unique super rapide ---
+            const resp = await fetch(`/api/stats_all_years/${encodeURIComponent(specialite)}?mode=${encodeURIComponent(currentMode)}`);
+            if (!resp.ok) {
+                console.error("Erreur stats_all_years");
+                return;
+            }
+
+            const bulk = await resp.json();
+
+            // --- Filtrage selon ville sélectionnée ---
+            const raw = bulk.data.filter(entry =>
+                selectedVille
+                    ? entry.ville === selectedVille.toUpperCase()
+                    : villesToAnalyze.map(v => v.toUpperCase()).includes(entry.ville)
+            );
+            // --- Conversion en format utilisé par le barplot ---
+            const cityData = raw.map(entry => {
+                const normalizedMin = Math.round((entry.rang_min / 8957) * currentTotal);
+                const normalizedMax = Math.round((entry.rang_max / 8957) * currentTotal);
+
+                return {
+                    label: `${entry.ville} ${entry.annee}`,
+                    ville: entry.ville,
+                    year: entry.annee,
+                    min: normalizedMin,
+                    max: normalizedMax
+                };
+            });
+
+            if (cityData.length === 0) return;
+
+            cityData.sort((a, b) => ((a.min + a.max) / 2) - ((b.min + b.max) / 2));
+
+            const chartDom = document.getElementById('chartVilles');
+            const container = document.getElementById('chartContainer');
 
             const existingChart = echarts.getInstanceByDom(chartDom);
             if (existingChart) existingChart.dispose();
 
-            const width = container.clientWidth;
-            const myChart = echarts.init(chartDom, null, { width: width, height: 600 });
-
-            const years = allData.map(d => d.year);
-            const minData = allData.map(d => Math.round((d.rang_min / totalCandidates[d.year]) * currentTotal));
-            const maxData = allData.map(d => Math.round((d.rang_max / totalCandidates[d.year]) * currentTotal));
+            const myChart = echarts.init(chartDom, null, { width: container.clientWidth, height: 600 });
 
             const option = {
                 title: {
-                    text: title,
+                    text: `Rangs par ville - ${specialite}`,
+                    subtext: 'Min → Max (toutes années)',
                     left: 'center',
                     top: 20,
-                    textStyle: { fontSize: 18, fontWeight: '500', color: '#000' }
+                    textStyle: { fontSize: 18, fontWeight: '500', color: '#000' },
+                    subtextStyle: { fontSize: 13, color: '#666' }
                 },
                 tooltip: {
                     trigger: 'axis',
                     backgroundColor: 'rgba(255, 255, 255, 0.95)',
                     borderColor: '#e5e5e5',
-                    borderWidth: 1,
-                    textStyle: { color: '#000', fontSize: 13 }
+                    axisPointer: { type: 'shadow' },
+                    formatter: function (params) {
+                        const idx = params[0].dataIndex;
+                        const item = cityData[idx];
+                        return `<strong>${item.label}</strong><br/>Min: ${item.min}<br/>Max: ${item.max}`;
+                    }
                 },
-                legend: {
-                    data: ['Rang Min', 'Rang Max', userRank ? 'Votre rang' : null].filter(Boolean),
-                    bottom: 20,
-                    textStyle: { color: '#666', fontSize: 13 }
+                grid: {
+                    left: '15%',
+                    right: '5%',
+                    top: 100,
+                    bottom: 80,
+                    containLabel: true
                 },
-                grid: { left: '5%', right: '5%', top: 80, bottom: 80, containLabel: true },
                 xAxis: {
-                    type: 'category',
-                    data: years,
-                    axisLine: { lineStyle: { color: '#e5e5e5' } },
-                    axisLabel: { color: '#666', fontSize: 13 }
-                },
-                yAxis: {
                     type: 'value',
                     name: 'Rang',
                     inverse: true,
+                    min: 0,                    // ✅ Commence à 0
+                    max: currentTotal,         // ✅ Termine au total (8958)
                     axisLine: { show: false },
-                    axisLabel: { color: '#666', fontSize: 13 },
+                    axisLabel: { color: '#666', fontSize: 12 },
                     splitLine: { lineStyle: { color: '#f5f5f5' } }
+                },
+                yAxis: {
+                    type: 'category',
+                    data: cityData.map(d => d.label),
+                    axisLine: { lineStyle: { color: '#e5e5e5' } },
+                    axisLabel: { color: '#666', fontSize: 11 }
                 },
                 series: [
                     {
-                        name: 'Rang Min',
-                        type: 'line',
-                        data: minData,
-                        smooth: true,
-                        symbolSize: 8,
-                        lineStyle: { color: '#000', width: 3 },
-                        itemStyle: { color: '#000', borderWidth: 2, borderColor: '#fff' },
-                        areaStyle: { color: 'rgba(0, 0, 0, 0.08)' }
-                    },
-                    {
-                        name: 'Rang Max',
-                        type: 'line',
-                        data: maxData,
-                        smooth: true,
-                        symbolSize: 8,
-                        lineStyle: { color: '#666', width: 3 },
-                        itemStyle: { color: '#666', borderWidth: 2, borderColor: '#fff' },
-                        areaStyle: { color: 'rgba(0, 0, 0, 0.04)' }
-                    },
-                    userRank > 0 ? {
-                        name: 'Votre rang',
-                        type: 'line',
-                        data: Array(years.length).fill(userRank),
-                        symbolSize: 6,
-                        lineStyle: { color: '#000', width: 2, type: [5, 5] },
-                        itemStyle: { color: '#000' }
-                    } : null
-                ].filter(Boolean)
+                        type: 'custom',
+                        renderItem: (params, api) => {
+                            const idx = params.dataIndex;
+                            const item = cityData[idx];
+
+                            // Coordonnées des points min et max
+                            const startCoord = api.coord([item.max, idx]); // max à gauche (inversé)
+                            const endCoord = api.coord([item.min, idx]);   // min à droite (inversé)
+                            const height = api.size([0, 1])[1] * 0.6;
+
+                            const isInRange = userRank > 0 && userRank >= item.min && userRank <= item.max;
+
+                            return {
+                                type: 'rect',
+                                shape: {
+                                    x: startCoord[0],
+                                    y: startCoord[1] - height / 2,
+                                    width: endCoord[0] - startCoord[0],
+                                    height: height
+                                },
+                                style: {
+                                    fill: isInRange ? '#000' : 'rgba(55, 128, 191, 0.6)',
+                                    stroke: isInRange ? '#000' : 'rgba(55, 128, 191, 1.0)',
+                                    lineWidth: 1
+                                }
+                            };
+                        },
+                        data: cityData.map((d, idx) => [d.min, d.max, idx]),
+                        z: 2
+                    }
+                ]
             };
 
-            myChart.setOption(option);
-            requestAnimationFrame(() => {
-                requestAnimationFrame(() => myChart.resize());
-            });
-            setTimeout(() => myChart.resize(), 500);
-            window.addEventListener('resize', () => myChart.resize());
-        }
-
-        async function createBarPlot(specialite, selectedVille, userRank, currentTotal) {
-            try {
-                const years = [2019, 2020, 2021, 2022, 2023, 2025];
-                const totalCandidates = { 2019: 8308, 2020: 8424, 2021: 8579, 2022: 8854, 2023: 9312, 2024: 7817, 2025: 8957 };
-                const villesToAnalyze = selectedVille ? [selectedVille] : villesData.slice(0, 15);
-
-                // --- Nouveau fetch unique super rapide ---
-                const resp = await fetch(`/api/stats_all_years/${encodeURIComponent(specialite)}?mode=${encodeURIComponent(currentMode)}`);
-                if (!resp.ok) {
-                    console.error("Erreur stats_all_years");
-                    return;
-                }
-
-                const bulk = await resp.json();
-
-                // --- Filtrage selon ville sélectionnée ---
-                const raw = bulk.data.filter(entry =>
-                    selectedVille
-                        ? entry.ville === selectedVille.toUpperCase()
-                        : villesToAnalyze.map(v => v.toUpperCase()).includes(entry.ville)
-                );
-                // --- Conversion en format utilisé par le barplot ---
-                const cityData = raw.map(entry => {
-                    const normalizedMin = Math.round((entry.rang_min / 8957) * currentTotal);
-                    const normalizedMax = Math.round((entry.rang_max / 8957) * currentTotal);
-
-                    return {
-                        label: `${entry.ville} ${entry.annee}`,
-                        ville: entry.ville,
-                        year: entry.annee,
-                        min: normalizedMin,
-                        max: normalizedMax
-                    };
-                });
-
-                if (cityData.length === 0) return;
-
-                cityData.sort((a, b) => ((a.min + a.max) / 2) - ((b.min + b.max) / 2));
-
-                const chartDom = document.getElementById('chartVilles');
-                const container = document.getElementById('chartContainer');
-
-                const existingChart = echarts.getInstanceByDom(chartDom);
-                if (existingChart) existingChart.dispose();
-
-                const myChart = echarts.init(chartDom, null, { width: container.clientWidth, height: 600 });
-
-                const option = {
-                    title: {
-                        text: `Rangs par ville - ${specialite}`,
-                        subtext: 'Min → Max (toutes années)',
-                        left: 'center',
-                        top: 20,
-                        textStyle: { fontSize: 18, fontWeight: '500', color: '#000' },
-                        subtextStyle: { fontSize: 13, color: '#666' }
-                    },
-                    tooltip: {
-                        trigger: 'axis',
-                        backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                        borderColor: '#e5e5e5',
-                        axisPointer: { type: 'shadow' },
-                        formatter: function (params) {
-                            const idx = params[0].dataIndex;
-                            const item = cityData[idx];
-                            return `<strong>${item.label}</strong><br/>Min: ${item.min}<br/>Max: ${item.max}`;
-                        }
-                    },
-                    grid: {
-                        left: '15%',
-                        right: '5%',
-                        top: 100,
-                        bottom: 80,
-                        containLabel: true
-                    },
-                    xAxis: {
-                        type: 'value',
-                        name: 'Rang',
-                        inverse: true,
-                        min: 0,                    // ✅ Commence à 0
-                        max: currentTotal,         // ✅ Termine au total (8958)
-                        axisLine: { show: false },
-                        axisLabel: { color: '#666', fontSize: 12 },
-                        splitLine: { lineStyle: { color: '#f5f5f5' } }
-                    },
-                    yAxis: {
-                        type: 'category',
-                        data: cityData.map(d => d.label),
-                        axisLine: { lineStyle: { color: '#e5e5e5' } },
-                        axisLabel: { color: '#666', fontSize: 11 }
-                    },
-                    series: [
-                        {
-                            type: 'custom',
-                            renderItem: (params, api) => {
-                                const idx = params.dataIndex;
-                                const item = cityData[idx];
-
-                                // Coordonnées des points min et max
-                                const startCoord = api.coord([item.max, idx]); // max à gauche (inversé)
-                                const endCoord = api.coord([item.min, idx]);   // min à droite (inversé)
-                                const height = api.size([0, 1])[1] * 0.6;
-
-                                const isInRange = userRank > 0 && userRank >= item.min && userRank <= item.max;
-
-                                return {
-                                    type: 'rect',
-                                    shape: {
-                                        x: startCoord[0],
-                                        y: startCoord[1] - height / 2,
-                                        width: endCoord[0] - startCoord[0],
-                                        height: height
-                                    },
-                                    style: {
-                                        fill: isInRange ? '#000' : 'rgba(55, 128, 191, 0.6)',
-                                        stroke: isInRange ? '#000' : 'rgba(55, 128, 191, 1.0)',
-                                        lineWidth: 1
-                                    }
-                                };
-                            },
-                            data: cityData.map((d, idx) => [d.min, d.max, idx]),
-                            z: 2
-                        }
-                    ]
-                };
-
-                if (userRank > 0) {
-                    option.series.push({
-                        type: 'line',
-                        data: cityData.map(() => userRank),
-                        lineStyle: { color: '#e74c3c', width: 2, type: 'dashed' },
-                        symbolSize: 0,
-                        z: 10
-                    });
-                }
-
-                myChart.setOption(option);
-
-                setTimeout(() => myChart.resize(), 100);
-                window.addEventListener('resize', () => myChart.resize());
-
-            } catch (err) {
-                console.error('Erreur createBarPlot:', err);
-            }
-        }
-        function showStatsSummary(allData, userRank, currentTotal) {
-            const totalCandidates = { 2019: 8308, 2020: 8424, 2021: 8579, 2022: 8854, 2023: 9312, 2024: 7817, 2025: 8957 };
-
-            const normalizedData = allData.map(d => ({
-                rang_min_normalized: Math.round((d.rang_min / totalCandidates[d.year]) * currentTotal),
-                rang_max_normalized: Math.round((d.rang_max / totalCandidates[d.year]) * currentTotal),
-                year: d.year
-            }));
-
-            const avgMin = Math.round(normalizedData.reduce((sum, d) => sum + d.rang_min_normalized, 0) / normalizedData.length);
-            const avgMax = Math.round(normalizedData.reduce((sum, d) => sum + d.rang_max_normalized, 0) / normalizedData.length);
-            const latestYear = normalizedData[normalizedData.length - 1];
-
-            let statusEmoji = '';
-            let statusText = '';
             if (userRank > 0) {
-                if (userRank <= avgMin) {
-                    statusEmoji = '✅';
-                    statusText = 'Zone sûre';
-                } else if (userRank <= avgMax) {
-                    statusEmoji = '⚠️';
-                    statusText = 'Zone accessible';
-                } else {
-                    statusEmoji = '❌';
-                    statusText = 'Difficile';
-                }
+                option.series.push({
+                    type: 'line',
+                    data: cityData.map(() => userRank),
+                    lineStyle: { color: '#e74c3c', width: 2, type: 'dashed' },
+                    symbolSize: 0,
+                    z: 10
+                });
             }
 
-            const summaryEl = document.getElementById('statsSummary');
-            summaryEl.innerHTML = `
+            myChart.setOption(option);
+
+            setTimeout(() => myChart.resize(), 100);
+            window.addEventListener('resize', () => myChart.resize());
+
+        } catch (err) {
+            console.error('Erreur createBarPlot:', err);
+        }
+    }
+    function showStatsSummary(allData, userRank, currentTotal) {
+        const totalCandidates = { 2019: 8308, 2020: 8424, 2021: 8579, 2022: 8854, 2023: 9312, 2024: 7817, 2025: 8957 };
+
+        const normalizedData = allData.map(d => ({
+            rang_min_normalized: Math.round((d.rang_min / totalCandidates[d.year]) * currentTotal),
+            rang_max_normalized: Math.round((d.rang_max / totalCandidates[d.year]) * currentTotal),
+            year: d.year
+        }));
+
+        const avgMin = Math.round(normalizedData.reduce((sum, d) => sum + d.rang_min_normalized, 0) / normalizedData.length);
+        const avgMax = Math.round(normalizedData.reduce((sum, d) => sum + d.rang_max_normalized, 0) / normalizedData.length);
+        const latestYear = normalizedData[normalizedData.length - 1];
+
+        let statusEmoji = '';
+        let statusText = '';
+        if (userRank > 0) {
+            if (userRank <= avgMin) {
+                statusEmoji = '✅';
+                statusText = 'Zone sûre';
+            } else if (userRank <= avgMax) {
+                statusEmoji = '⚠️';
+                statusText = 'Zone accessible';
+            } else {
+                statusEmoji = '❌';
+                statusText = 'Difficile';
+            }
+        }
+
+        const summaryEl = document.getElementById('statsSummary');
+        summaryEl.innerHTML = `
                 <div class="grid grid-cols-2 gap-4 text-center">
                     <div>
                         <div class="text-xs uppercase tracking-wider text-gray-500 mb-1">Rang min moyen</div>
@@ -1160,49 +1065,49 @@
                     ` : ''}
                 </div>
             `;
-        }
+    }
 
-        function showLoading(show) {
-            document.getElementById('loading').classList.toggle('hidden', !show);
-        }
+    function showLoading(show) {
+        document.getElementById('loading').classList.toggle('hidden', !show);
+    }
 
-        function showError(message) {
-            const errorEl = document.getElementById('error');
-            errorEl.textContent = message;
-            errorEl.classList.remove('hidden');
-        }
+    function showError(message) {
+        const errorEl = document.getElementById('error');
+        errorEl.textContent = message;
+        errorEl.classList.remove('hidden');
+    }
 
-        function hideError() {
-            document.getElementById('error').classList.add('hidden');
-        }
+    function hideError() {
+        document.getElementById('error').classList.add('hidden');
+    }
 
-        // Gestion des onglets
-        document.getElementById('tabEvolution').addEventListener('click', () => {
-            document.querySelectorAll('.tab-minimal').forEach(b => b.classList.remove('active'));
-            document.getElementById('tabEvolution').classList.add('active');
-            document.getElementById('chart').classList.remove('hidden');
-            document.getElementById('chartVilles').classList.add('hidden');
+    // Gestion des onglets
+    document.getElementById('tabEvolution').addEventListener('click', () => {
+        document.querySelectorAll('.tab-minimal').forEach(b => b.classList.remove('active'));
+        document.getElementById('tabEvolution').classList.add('active');
+        document.getElementById('chart').classList.remove('hidden');
+        document.getElementById('chartVilles').classList.add('hidden');
 
-            setTimeout(() => {
-                const chart = echarts.getInstanceByDom(document.getElementById('chart'));
-                if (chart) chart.resize();
-            }, 50);
-        });
+        setTimeout(() => {
+            const chart = echarts.getInstanceByDom(document.getElementById('chart'));
+            if (chart) chart.resize();
+        }, 50);
+    });
 
-        document.getElementById('tabVilles').addEventListener('click', () => {
-            document.querySelectorAll('.tab-minimal').forEach(b => b.classList.remove('active'));
-            document.getElementById('tabVilles').classList.add('active');
-            document.getElementById('chart').classList.add('hidden');
-            document.getElementById('chartVilles').classList.remove('hidden');
+    document.getElementById('tabVilles').addEventListener('click', () => {
+        document.querySelectorAll('.tab-minimal').forEach(b => b.classList.remove('active'));
+        document.getElementById('tabVilles').classList.add('active');
+        document.getElementById('chart').classList.add('hidden');
+        document.getElementById('chartVilles').classList.remove('hidden');
 
-            setTimeout(() => {
-                const chart = echarts.getInstanceByDom(document.getElementById('chartVilles'));
-                if (chart) chart.resize();
-            }, 50);
-        });
+        setTimeout(() => {
+            const chart = echarts.getInstanceByDom(document.getElementById('chartVilles'));
+            if (chart) chart.resize();
+        }, 50);
+    });
 
-        loadInitialData();
-    </script>
+    loadInitialData();
+</script>
 </body>
 
 </html>
